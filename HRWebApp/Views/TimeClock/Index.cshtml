@@ -1,0 +1,61 @@
+﻿@model HRWebApp.Models.TimeClockViewModel
+
+@{
+    ViewData["Title"] = "Time Clock";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Time Clock - @Model.EmployeeName</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Current Status</h5>
+                            <p class="card-text">
+                                @if (Model.IsCurrentlyClockedIn)
+                                {
+                                    <span class="text-success">Currently Clocked In</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">Currently Clocked Out</span>
+                                }
+                            </p>
+                            @if (Model.LastClockIn.HasValue)
+                            {
+                                <p>Last Clock In: @Model.LastClockIn.Value.ToString("MM/dd/yyyy HH:mm:ss")</p>
+                            }
+                            @if (Model.LastClockOut.HasValue)
+                            {
+                                <p>Last Clock Out: @Model.LastClockOut.Value.ToString("MM/dd/yyyy HH:mm:ss")</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Actions</h5>
+                            @if (!Model.IsCurrentlyClockedIn)
+                            {
+                                <form asp-action="ClockIn" method="post">
+                                    <button type="submit" class="btn btn-success btn-lg">Clock In</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-action="ClockOut" method="post">
+                                    <button type="submit" class="btn btn-danger btn-lg">Clock Out</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

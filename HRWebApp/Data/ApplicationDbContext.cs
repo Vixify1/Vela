@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using System.Data.Entity.ModelConfiguration;
 
 namespace HRWebApp.Data
 {
@@ -69,7 +68,7 @@ namespace HRWebApp.Data
                 var configuration = Activator.CreateInstance(typeConfiguration) as IMappingConfiguration;
                 mapList.Add(configuration);
             }
-            foreach (var map in mapList.OrderBy(l => l?.Order))
+            foreach (var map in mapList)
             {
                 map?.ApplyConfiguration(modelBuilder);
             }

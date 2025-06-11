@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +8,7 @@ using System.Reflection;
 using HRWebApp.Enums;
 using HRWebApp.Abstract;
 using HRWebApp.Models.Authentication;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HRWebApp.Controllers
 {
@@ -19,12 +18,15 @@ namespace HRWebApp.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IEntitiesRepository<Employee> _employeeRepository;
-        public AuthenticationController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEntitiesRepository<Employee> employeeRepository)
+        private readonly IEntitiesRepository<Department> _departmentRepository;
+        public AuthenticationController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEntitiesRepository<Employee> employeeRepository, IEntitiesRepository<Department> departmentRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _employeeRepository = employeeRepository;
+            _departmentRepository = departmentRepository;
+
         }
 
         [HttpGet]
@@ -37,6 +39,8 @@ namespace HRWebApp.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            var departments = _departmentRepository.GetAll().ToList();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name");
             return View();
         }
 
@@ -52,7 +56,7 @@ namespace HRWebApp.Controllers
                 if (result.Succeeded)
                 {
                     //Check the status of the button
-                    if (model.UserType == Model.Enums.UserTypeOptions.Admin)
+                    if (model.UserType == HRWebApp.Enums.UserTypeOptions.Admin)
                     {
                         //create admin role
                         if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
@@ -85,10 +89,11 @@ namespace HRWebApp.Controllers
                         {
                             UserId = user.Id,
                             firstName = user.FirstName,
-                            lastName = user.LastName,
+                            lastName = user.LastName,   
                             createdAt = DateTime.Now,
                             updatedAt = DateTime.Now,
-
+                            DepartmentId = model.DepartmentId,
+                            HourlyRate = model.HourlyRate
                         };
 
                         // add the new employee to the repository 
@@ -106,7 +111,8 @@ namespace HRWebApp.Controllers
                 }
 
             }
-
+            var departments = _departmentRepository.GetAll().ToList();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name", model.DepartmentId);
             return View(model);
         }
 

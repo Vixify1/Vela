@@ -26,7 +26,14 @@ namespace HRWebApp.Models.Authentication
 
         public string ConfirmPassword { get; set; } = string.Empty;
 
+            [Required]
+            [Display(Name = "Department")]
+            public int DepartmentId { get; set; }
 
+            [Required]
+            [Display(Name = "Hourly Rate")]
+            public decimal HourlyRate { get; set; }
+        
         //For userRoles
         public UserTypeOptions UserType { get; set; } = UserTypeOptions.User;
     }

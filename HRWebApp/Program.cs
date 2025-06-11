@@ -57,10 +57,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
 builder.Services.AddSession();
 builder.Services.AddMvc();
-
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
-builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -97,6 +96,25 @@ app.MapControllerRoute(
 //    pattern: "{controller}/{action}/{id?}"
 //    );
 
+// Seed initial data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        if (!context.Set<Department>().Any())
+        {
+            context.Set<Department>().Add(new Department { Name = "General" });
+            context.SaveChanges();
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 
 app.Run();
 

@@ -14,6 +14,6 @@ namespace HRWebApp.Entities
         public DateTime Date { get; set; }
 
         public DateTime ClockIn { get; set; }
-        public DateTime ClockOut { get; set; }
+        public DateTime? ClockOut { get; set; }
     }
 }
