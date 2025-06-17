@@ -1,0 +1,54 @@
+﻿@model HRWebApp.Models.Admin.AttendanceLogEditViewModel
+
+@{
+    ViewData["Title"] = "Add Attendance Record";
+}
+
+<div class="container mt-4">
+    <h2>Add Attendance Record</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="EmployeeId" class="control-label"></label>
+                    <select asp-for="EmployeeId" asp-items="Model.Employees" class="form-control">
+                        <option value="">-- Select Employee --</option>
+                    </select>
+                    <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Date" class="control-label"></label>
+                    <input asp-for="Date" class="form-control" type="date" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="ClockInTime" class="control-label"></label>
+                    <input asp-for="ClockInTime" class="form-control" type="time" />
+                    <span asp-validation-for="ClockInTime" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="ClockOutTime" class="control-label"></label>
+                    <input asp-for="ClockOutTime" class="form-control" type="time" />
+                    <span asp-validation-for="ClockOutTime" class="text-danger"></span>
+                    <small class="form-text text-muted">Leave blank if employee hasn't clocked out yet</small>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Add Record" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

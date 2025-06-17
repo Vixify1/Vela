@@ -1,0 +1,132 @@
+﻿@model HRWebApp.Models.MonthlyAttendanceViewModel
+
+@{
+    ViewData["Title"] = "Manage Attendance";
+}
+
+<div class="container mt-4">
+    <h2>Attendance Management</h2>
+
+    <form asp-action="Index" method="post">
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <label asp-for="SelectedMonth" class="control-label"></label>
+                <select asp-for="SelectedMonth" asp-items="Model.Months" class="form-control">
+                    <option value="">-- Select Month --</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label asp-for="SelectedYear" class="control-label"></label>
+                <select asp-for="SelectedYear" asp-items="Model.Years" class="form-control">
+                    <option value="">-- Select Year --</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="EmployeeId" class="control-label">Employee</label>
+                <select asp-for="EmployeeId" asp-items="Model.Employees" class="form-control">
+                    <option value="">-- Select Employee --</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">View Records</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.AttendanceRecords.Any())
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>@Model.MonthYearDisplay Summary - @Model.EmployeeName</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Total Days Worked:</strong> @Model.TotalDaysWorked
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Total Hours:</strong> @Model.TotalHoursWorked.ToString("F2")
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Records Found:</strong> @Model.AttendanceRecords.Count
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Attendance Records</h5>
+                <a asp-action="Create" class="btn btn-primary btn-sm">Add New Record</a>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Clock In</th>
+                            <th>Clock Out</th>
+                            <th>Hours Worked</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var record in Model.AttendanceRecords)
+                        {
+                            <tr>
+                                <td>@record.Date.ToString("MMM dd, yyyy")</td>
+                                <td>@record.DayOfWeek</td>
+                                <td>@record.ClockInTime</td>
+                                <td>@record.ClockOutTime</td>
+                                <td>
+                                    @if (record.WorkedHours.HasValue)
+                                    {
+                                        @record.WorkedHours.Value.ToString("F2")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (record.Status == "Complete")
+                                    {
+                                        <span class="badge bg-success">@record.Status</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">@record.Status</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@record.Id" class="btn btn-sm btn-primary">Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@record.Id" class="btn btn-sm btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else if (Model.EmployeeId > 0 && Model.SelectedMonth > 0)
+    {
+        <div class="alert alert-info">
+            <h5>No Records Found</h5>
+            <p>No attendance records found for @Model.EmployeeName in @Model.MonthYearDisplay.</p>
+            <a asp-action="Create" class="btn btn-primary">Add First Record</a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-secondary">
+            <h5>Select Employee and Month</h5>
+            <p>Please select an employee, month, and year to view attendance records.</p>
+        </div>
+    }
+</div>
