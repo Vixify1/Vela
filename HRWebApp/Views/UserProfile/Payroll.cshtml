@@ -1,0 +1,148 @@
+@model HRWebApp.Models.PayrollListViewModel
+
+@{
+    ViewData["Title"] = "My Payroll";
+}
+
+<div class="container mt-4">
+    <h2>My Payroll Records</h2>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Payroll" method="get">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="month" class="form-label">Month</label>
+                        <select name="month" class="form-select">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                var monthName = new DateTime(2024, i, 1).ToString("MMMM");
+                                <option value="@i" selected="@(i == Model.SelectedMonth)">@monthName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="year" class="form-label">Year</label>
+                        <select name="year" class="form-select">
+                            @for (int year = DateTime.Now.Year - 2; year <= DateTime.Now.Year + 1; year++)
+                            {
+                                <option value="@year" selected="@(year == Model.SelectedYear)">@year</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">View Payroll</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payroll Details -->
+    @if (Model.PayrollRecords.Any())
+    {
+        var record = Model.PayrollRecords.First();
+        
+        <div class="card">
+            <div class="card-header">
+                <h5>Payroll Details for @Model.MonthYearDisplay</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6>Hours Breakdown</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Standard Hours:</td>
+                                <td><strong>@record.StandardHours.ToString("F2")</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Holiday Hours (1.5x):</td>
+                                <td><strong>@record.HolidayHours.ToString("F2")</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Sunday Hours (1.75x):</td>
+                                <td><strong>@record.SundayHours.ToString("F2")</strong></td>
+                            </tr>
+                            <tr class="table-primary">
+                                <td><strong>Total Hours:</strong></td>
+                                <td><strong>@record.TotalHours.ToString("F2")</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Pay Breakdown</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Hourly Rate:</td>
+                                <td><strong>$@record.HourlyRate.ToString("F2")</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Standard Pay:</td>
+                                <td><strong>$@record.StandardPay.ToString("F2")</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Holiday Pay:</td>
+                                <td><strong>$@record.HolidayPay.ToString("F2")</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Sunday Pay:</td>
+                                <td><strong>$@record.SundayPay.ToString("F2")</strong></td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>Gross Salary:</strong></td>
+                                <td><strong>$@record.GrossSalary.ToString("F2")</strong></td>
+                            </tr>
+                            <tr class="table-primary">
+                                <td><strong>Net Salary:</strong></td>
+                                <td><strong>$@record.NetSalary.ToString("F2")</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            No payroll records found for @Model.MonthYearDisplay. 
+            Please contact your administrator if you believe this is an error.
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Total Hours</th>
+                    <th>Hourly Rate</th>
+                    <th>Gross Salary</th>
+                    <th>Net Salary</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var payroll in Model.PayrollRecords)
+                {
+                    <tr>
+                        <td>@payroll.MonthYearDisplay</td>
+                        <td>@payroll.TotalHours.ToString("F1")</td>
+                        <td>$@payroll.HourlyRate.ToString("F2")</td>
+                        <td>$@payroll.GrossSalary.ToString("F2")</td>
+                        <td>$@payroll.NetSalary.ToString("F2")</td>
+                        <td>
+                            <a href="@Url.Action("DownloadSalaryLetter", "UserProfile", new { payrollId = payroll.Id })" 
+                               class="btn btn-success btn-sm">
+                                <i class="fas fa-download"></i> Download Letter
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div> 

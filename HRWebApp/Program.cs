@@ -6,6 +6,7 @@ using HRWebApp.Abstract;
 using HRWebApp.Concrete;
 using HRWebApp.Data;
 using HRWebApp.Entities;
+using HRWebApp.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +60,9 @@ builder.Services.AddSession();
 builder.Services.AddMvc();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+builder.Services.AddScoped<PayrollHelper>();
+builder.Services.AddScoped<DbSeeder>();
+builder.Services.AddScoped<SalaryLetterHelper>();
 
 var app = builder.Build();
 
@@ -106,11 +110,24 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        // Ensure database is created
         var context = services.GetRequiredService<ApplicationDbContext>();
-        if (!context.Set<Department>().Any())
+        context.Database.EnsureCreated();
+
+        // Run the enhanced seeder
+        if (app.Environment.IsDevelopment()) // Only in development
         {
-            context.Set<Department>().Add(new Department { Name = "General" });
-            context.SaveChanges();
+            var seeder = services.GetRequiredService<DbSeeder>();
+            await seeder.SeedAsync();
+        }
+        else
+        {
+            // Minimal production seeding
+            if (!context.Set<Department>().Any())
+            {
+                context.Set<Department>().Add(new Department { Name = "General" });
+                context.SaveChanges();
+            }
         }
     }
     catch (Exception ex)

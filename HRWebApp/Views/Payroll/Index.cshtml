@@ -1,0 +1,96 @@
+@model HRWebApp.Models.PayrollListViewModel
+
+@{
+    ViewData["Title"] = "Payroll Management";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Payroll Management</h2>
+        <a asp-action="Calculate" asp-route-month="@Model.SelectedMonth" asp-route-year="@Model.SelectedYear" 
+           class="btn btn-success">
+            <i class="fas fa-calculator"></i> Calculate All Payrolls
+        </a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="post">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label asp-for="SelectedMonth" class="form-label">Month</label>
+                        <select asp-for="SelectedMonth" asp-items="Model.Months" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="SelectedYear" class="form-label">Year</label>
+                        <select asp-for="SelectedYear" asp-items="Model.Years" class="form-select"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="SelectedEmployeeId" class="form-label">Employee</label>
+                        <select asp-for="SelectedEmployeeId" asp-items="Model.Employees" class="form-select"></select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="card">
+        <div class="card-header">
+            <h5>Payroll Records for @Model.MonthYearDisplay</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.PayrollRecords.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Period</th>
+                                <th>Total Hours</th>
+                                <th>Hourly Rate</th>
+                                <th>Gross Salary</th>
+                                <th>Net Salary</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var payroll in Model.PayrollRecords)
+                            {
+                                <tr>
+                                    <td>@payroll.EmployeeName</td>
+                                    <td>@payroll.MonthYearDisplay</td>
+                                    <td>@payroll.TotalHours.ToString("F1")</td>
+                                    <td>$@payroll.HourlyRate.ToString("F2")</td>
+                                    <td>$@payroll.GrossSalary.ToString("F2")</td>
+                                    <td>$@payroll.NetSalary.ToString("F2")</td>
+                                    <td>
+                                        <a href="@Url.Action("DownloadSalaryLetter", "Payroll", new { payrollId = payroll.Id })" 
+                                           class="btn btn-primary btn-sm">
+                                            <i class="fas fa-download"></i> Download Letter
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    No payroll records found for @Model.MonthYearDisplay. 
+                    <a asp-action="Calculate" asp-route-month="@Model.SelectedMonth" asp-route-year="@Model.SelectedYear">
+                        Click here to calculate payrolls.
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div> 

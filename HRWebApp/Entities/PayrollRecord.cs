@@ -16,8 +16,22 @@ namespace HRWebApp.Entities
         [Required]
         public int Month { get; set; }
 
+        // Break down hours by type
+        public decimal StandardHours { get; set; }
+        public decimal HolidayHours { get; set; }
+        public decimal SundayHours { get; set; }
         public decimal TotalHours { get; set; }
+
+        // Pay calculations
+        public decimal HourlyRate { get; set; }
+        public decimal StandardPay { get; set; }
+        public decimal HolidayPay { get; set; }  // 1.5x rate
+        public decimal SundayPay { get; set; }   // 1.75x rate
         public decimal GrossSalary { get; set; }
-        public decimal NetSalary { get; set; }
+        public decimal NetSalary { get; set; }   // You can add deductions later
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public bool IsCalculated { get; set; }   // Flag to track if payroll is calculated
     }
 }

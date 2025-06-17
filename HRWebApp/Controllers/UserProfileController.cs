@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using HRWebApp.Models.Admin;
+using HRWebApp.Helper;
 
 namespace HRWebApp.Controllers
 {
@@ -14,15 +17,21 @@ namespace HRWebApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEntitiesRepository<Employee> _employeeRepository;
         private readonly IEntitiesRepository<Department> _departmentRepository;
+        private readonly IEntitiesRepository<PayrollRecord> _payrollRepository;
+        private readonly SalaryLetterHelper _salaryLetterHelper;
 
         public UserProfileController(
             UserManager<ApplicationUser> userManager,
             IEntitiesRepository<Employee> employeeRepository,
-            IEntitiesRepository<Department> departmentRepository)
+            IEntitiesRepository<Department> departmentRepository,
+            IEntitiesRepository<PayrollRecord> payrollRepository,
+            SalaryLetterHelper salaryLetterHelper)
         {
             _userManager = userManager;
             _employeeRepository = employeeRepository;
             _departmentRepository = departmentRepository;
+            _payrollRepository = payrollRepository;
+            _salaryLetterHelper = salaryLetterHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -132,6 +141,137 @@ namespace HRWebApp.Controllers
                 ModelState.AddModelError("", "An error occurred while updating your profile.");
                 return View("Index", model);
             }
+        }
+
+        public async Task<IActionResult> Payroll(int? month, int? year)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Authentication");
+
+            var employee = _employeeRepository.GetAll()
+                .FirstOrDefault(e => e.UserId == user.Id);
+
+            if (employee == null)
+            {
+                TempData["Error"] = "Employee record not found.";
+                return RedirectToAction("Index");
+            }
+
+            var selectedMonth = month ?? DateTime.Now.Month;
+            var selectedYear = year ?? DateTime.Now.Year;
+
+            var model = new PayrollListViewModel
+            {
+                SelectedMonth = selectedMonth,
+                SelectedYear = selectedYear,
+                IsAdminView = false,
+                Months = GetMonthSelectList(),
+                Years = GetYearSelectList()
+            };
+
+            // Load payroll records for this employee only
+            var payrollQuery = _payrollRepository.GetAll(p => p.Employee)
+                .Where(p => p.EmployeeId == employee.Id && 
+                       p.Year == selectedYear && 
+                       p.Month == selectedMonth);
+
+            // First get the data from database
+            var payrollData = payrollQuery.ToList();
+
+            // Then create view models in memory
+            var payrollRecords = payrollData.Select(p => new PayrollViewModel
+            {
+                Id = p.Id,
+                EmployeeId = p.EmployeeId,
+                EmployeeName = $"{p.Employee.firstName} {p.Employee.lastName}",
+                Month = p.Month,
+                Year = p.Year,
+                HourlyRate = p.HourlyRate,
+                StandardHours = p.StandardHours,
+                HolidayHours = p.HolidayHours,
+                SundayHours = p.SundayHours,
+                TotalHours = p.TotalHours,
+                StandardPay = p.StandardPay,
+                HolidayPay = p.HolidayPay,
+                SundayPay = p.SundayPay,
+                GrossSalary = p.GrossSalary,
+                NetSalary = p.NetSalary,
+                IsCalculated = p.IsCalculated
+            }).ToList();
+
+            model.PayrollRecords = payrollRecords;
+            return View(model);
+        }
+        // Download Salary Letter
+        public async Task<IActionResult> DownloadSalaryLetter(int payrollId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Authentication");
+
+            var employee = _employeeRepository.GetAll()
+                .FirstOrDefault(e => e.UserId == user.Id);
+
+            if (employee == null)
+            {
+                TempData["Error"] = "Employee record not found.";
+                return RedirectToAction("Index");
+            }
+
+            var payrollRecord = _payrollRepository.GetAll(p => p.Employee)
+                .FirstOrDefault(p => p.Id == payrollId && p.EmployeeId == employee.Id);
+
+            if (payrollRecord == null)
+            {
+                TempData["Error"] = "Payroll record not found or access denied.";
+                return RedirectToAction("Payroll");
+            }
+
+            var department = _departmentRepository.Get(employee.DepartmentId);
+
+            var model = new SalaryLetterViewModel
+            {
+                EmployeeId = payrollRecord.EmployeeId,
+                EmployeeName = $"{payrollRecord.Employee.firstName} {payrollRecord.Employee.lastName}",
+                EmployeeEmail = user.Email ?? "",
+                DepartmentName = department?.Name ?? "Not Assigned",
+                Month = payrollRecord.Month,
+                Year = payrollRecord.Year,
+                HourlyRate = payrollRecord.HourlyRate,
+                StandardHours = payrollRecord.StandardHours,
+                HolidayHours = payrollRecord.HolidayHours,
+                SundayHours = payrollRecord.SundayHours,
+                TotalHours = payrollRecord.TotalHours,
+                StandardPay = payrollRecord.StandardPay,
+                HolidayPay = payrollRecord.HolidayPay,
+                SundayPay = payrollRecord.SundayPay,
+                GrossSalary = payrollRecord.GrossSalary,
+                NetSalary = payrollRecord.NetSalary
+            };
+
+            var pdfBytes = _salaryLetterHelper.GenerateSalaryLetterPdf(model);
+            var fileName = $"SalaryLetter_{model.EmployeeName.Replace(" ", "_")}_{model.MonthYearDisplay.Replace(" ", "_")}.pdf";
+
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+
+        // Helper methods (add to UserProfileController)
+        private List<SelectListItem> GetMonthSelectList()
+        {
+            return Enumerable.Range(1, 12).Select(month => new SelectListItem
+            {
+                Value = month.ToString(),
+                Text = new DateTime(2024, month, 1).ToString("MMMM")
+            }).ToList();
+        }
+
+        private List<SelectListItem> GetYearSelectList()
+        {
+            var currentYear = DateTime.Now.Year;
+            return Enumerable.Range(currentYear - 2, 5).Select(year => new SelectListItem
+            {
+                Value = year.ToString(),
+                Text = year.ToString()
+            }).ToList();
         }
     }
 }
