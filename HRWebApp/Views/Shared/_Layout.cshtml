@@ -20,11 +20,14 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.IsAuthenticated)
                         {
+                            @if (!User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="TimeClock" asp-action="Index">Time Clock</a>
+                                </li>
+                            }
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="TimeClock" asp-action="Index">Time Clock</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="TimeClock" asp-action="MonthlyDetails">Monthly Details</a>
+                                <a class="nav-link text-dark" asp-controller="TimeClock" asp-action="MonthlyDetails">Attendance</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="UserProfile" asp-action="Index">Profile</a>
@@ -57,7 +60,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Manage Employees</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Holiday" asp-action="Index">Manage Holidays</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Holiday" asp-action="Calendar">Manage Holidays</a>
                             </li>
 @*                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Attendance" asp-action="Index">Manage Attendance</a>

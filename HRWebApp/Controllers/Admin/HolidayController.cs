@@ -16,7 +16,14 @@ namespace HRWebApp.Controllers.Admin
             _holidayRepository = holidayRepository;
         }
 
+        // Calendar is now the default view
         public IActionResult Index()
+        {
+            return RedirectToAction("Calendar");
+        }
+
+        // List view for detailed management
+        public IActionResult List()
         {
             var holidays = _holidayRepository.GetAll()
                 .OrderBy(h => h.Date)
@@ -62,7 +69,7 @@ namespace HRWebApp.Controllers.Admin
                 };
 
                 _holidayRepository.Add(holiday);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Calendar");
             }
 
             return View(model);
@@ -112,7 +119,7 @@ namespace HRWebApp.Controllers.Admin
                 holiday.Description = model.Description;
                 _holidayRepository.Update(holiday);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Calendar");
             }
 
             return View(model);
@@ -146,9 +153,10 @@ namespace HRWebApp.Controllers.Admin
                 _holidayRepository.Remove(holiday);
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Calendar");
         }
 
+        // Calendar view - now the main view
         public IActionResult Calendar()
         {
             var currentYear = DateTime.Now.Year;

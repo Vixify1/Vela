@@ -41,7 +41,7 @@
         </div>
     </form>
 
-    @if (Model.IsAdminView && !Model.AttendanceRecords.Any())
+    @if (Model.IsAdminView && Model.EmployeeId == 0)
     {
         <!-- Instructional Message for Admin -->
         <div class="alert alert-info" role="alert">
@@ -143,6 +143,14 @@
         <div class="alert alert-warning" role="alert">
             <h5 class="alert-heading">No Records Found</h5>
             <p class="mb-0">No attendance records found for <strong>@Model.EmployeeName</strong> in <strong>@Model.MonthYearDisplay</strong>.</p>
+        </div>
+    }
+    else if (Model.EmployeeId > 0)
+    {
+        <!-- Message when employee is selected but no records found -->
+        <div class="alert alert-warning" role="alert">
+            <h5 class="alert-heading">No Records Found</h5>
+            <p class="mb-0">No attendance records found for <strong>@Model.MonthYearDisplay</strong>.</p>
         </div>
     }
 </div>
