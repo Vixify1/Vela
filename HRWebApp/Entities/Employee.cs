@@ -17,11 +17,6 @@ namespace HRWebApp.Entities
         public string firstName { get; set; }
         public string lastName { get; set; }
 
-        public string? Address { get; set; }
-
-
-
-
         [Required]
         public decimal HourlyRate { get; set; }
 
@@ -30,10 +25,6 @@ namespace HRWebApp.Entities
 
         public ICollection<AttendanceLog> AttendanceLogs { get; set; }
         public ICollection<PayrollRecord> PayrollRecords { get; set; }
-
-
-
-
 
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }

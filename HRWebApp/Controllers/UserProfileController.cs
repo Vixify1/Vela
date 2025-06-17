@@ -13,13 +13,16 @@ namespace HRWebApp.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEntitiesRepository<Employee> _employeeRepository;
+        private readonly IEntitiesRepository<Department> _departmentRepository;
 
         public UserProfileController(
             UserManager<ApplicationUser> userManager,
-            IEntitiesRepository<Employee> employeeRepository)
+            IEntitiesRepository<Employee> employeeRepository,
+            IEntitiesRepository<Department> departmentRepository)
         {
             _userManager = userManager;
             _employeeRepository = employeeRepository;
+            _departmentRepository = departmentRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -41,7 +44,7 @@ namespace HRWebApp.Controllers
             var model = new UserProfileViewModel
             {
                 UserId = user.Id,
-                UserName = user.UserName,
+                UserName = $"{user.FirstName} {user.LastName}",
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -52,7 +55,9 @@ namespace HRWebApp.Controllers
             if (employee != null)
             {
                 model.EmployeeId = employee.Id;
-                model.Address = employee.Address;
+                var department = _departmentRepository.Get(employee.DepartmentId);
+                model.DepartmentName = department?.Name ?? "Not Assigned";
+                model.HourlyRate = employee.HourlyRate;
             }
 
             return View(model);
@@ -62,63 +67,137 @@ namespace HRWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile(UserProfileViewModel model)
         {
+            // Get current user first to check admin status
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return NotFound();
+            }
+
+            // Check if user is admin
+            var isAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+            model.IsAdmin = isAdmin; // Ensure model has correct admin status
+
             if (!ModelState.IsValid)
             {
                 return View("Index", model);
             }
 
-            // Get current user
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            try
             {
-                return NotFound();
-            }
+                // Update user properties
+                currentUser.FirstName = model.FirstName;
+                currentUser.LastName = model.LastName;
+                currentUser.UpdatedOnUtc = DateTime.UtcNow;
 
-            // Update user
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.UpdatedOnUtc = DateTime.UtcNow;
+                // For admin users, update the username to reflect the new full name
+                //if (isAdmin)
+                //{
+                //    var newUserName = $"{model.FirstName} {model.LastName}";
+                //    currentUser.UserName = newUserName;
+                //    currentUser.NormalizedUserName = newUserName.ToUpper();
+                //}
 
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
+                // Update the user
+                var result = await _userManager.UpdateAsync(currentUser);
+                if (!result.Succeeded)
                 {
-                    ModelState.AddModelError("", error.Description);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View("Index", model);
                 }
+
+                // For non-admin users, also update their employee profile
+                if (!isAdmin)
+                {
+                    var employee = _employeeRepository.GetAll()
+                        .FirstOrDefault(c => c.UserId == currentUser.Id);
+
+                    if (employee != null)
+                    {
+                        employee.firstName = model.FirstName;
+                        employee.lastName = model.LastName;
+                        employee.updatedAt = DateTime.Now;
+                        _employeeRepository.Update(employee);
+                    }
+                }
+
+                TempData["StatusMessage"] = "Your profile has been updated successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while updating your profile.");
                 return View("Index", model);
             }
-
-            // Find or create employee profile
-            var employee = _employeeRepository.GetAll()
-                .FirstOrDefault(c => c.UserId == user.Id);
-
-            if (employee == null)
-            {
-                // Create new employee profile
-                employee = new Employee
-                {
-                    UserId = user.Id,
-                    firstName = model.FirstName,
-                    lastName = model.LastName,
-                    Address = model.Address,
-                    createdAt = DateTime.Now,
-                    updatedAt = DateTime.Now
-                };
-                _employeeRepository.Add(employee);
-            }
-            else
-            {
-                // Update existing employee
-                employee.firstName = model.FirstName;
-                employee.lastName = model.LastName;
-                employee.Address = model.Address;
-                employee.updatedAt = DateTime.Now;
-                _employeeRepository.Update(employee);
-            }
-
-            TempData["StatusMessage"] = "Your profile has been updated";
-            return RedirectToAction(nameof(Index));
         }
     }
 }
+
+        //        [HttpGet]
+        //        public async Task<IActionResult> Edit()
+        //        {
+        //            var user = await _userManager.GetUserAsync(User);
+        //            if (user == null)
+        //            {
+        //                return NotFound();
+        //            }
+
+        //            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+        //            if (!isAdmin)
+        //            {
+        //                return RedirectToAction(nameof(Index));
+        //            }
+
+        //            var model = new UserProfileViewModel
+        //            {
+        //                UserId = user.Id,
+        //                UserName = $"{user.FirstName} {user.LastName}",
+        //                Email = user.Email,
+        //                FirstName = user.FirstName,
+        //                LastName = user.LastName,
+        //                IsAdmin = true
+        //            };
+
+        //            return View(model);
+        //        }
+
+        //        [HttpPost]
+        //        [ValidateAntiForgeryToken]
+        //        public async Task<IActionResult> Edit(UserProfileViewModel model)
+        //        {
+        //            if (!ModelState.IsValid)
+        //            {
+        //                model.IsAdmin = true;
+        //                return View(model);
+        //            }
+
+        //            var user = await _userManager.GetUserAsync(User);
+        //            if (user == null)
+        //            {
+        //                return NotFound();
+        //            }
+
+        //            user.FirstName = model.FirstName;
+        //            user.LastName = model.LastName;
+        //            user.Email = model.Email;
+        //            user.UpdatedOnUtc = DateTime.UtcNow;
+
+        //            var result = await _userManager.UpdateAsync(user);
+        //            if (!result.Succeeded)
+        //            {
+        //                foreach (var error in result.Errors)
+        //                {
+        //                    ModelState.AddModelError("", error.Description);
+        //                }
+        //                model.IsAdmin = true;
+        //                return View(model);
+        //            }
+
+        //            TempData["StatusMessage"] = "Your profile has been updated";
+        //            return RedirectToAction(nameof(Index));
+        //        }
+        //    }
+    ///}

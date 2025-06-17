@@ -1,6 +1,6 @@
 ﻿@model HRWebApp.Models.Authentication.RegisterViewModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Register New User";
 }
 
 <div class="container mt-5">
@@ -8,7 +8,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="text-center">Register</h2>
+                    <h2 class="text-center">Register New User</h2>
                 </div>
                 <div class="card-body">
                     <form asp-controller="Authentication" asp-action="Register" method="post">
@@ -44,33 +44,11 @@
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="UserType" class="control-label"></label>
-                            <select asp-for="UserType" asp-items="Html.GetEnumSelectList<HRWebApp.Enums.UserTypeOptions>()" class="form-control"></select>
-                            <span asp-validation-for="UserType" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label asp-for="DepartmentId" class="control-label"></label>
-                            <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-control">
-                                <option value="">-- Select Department --</option>
-                            </select>
-                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label asp-for="HourlyRate" class="control-label"></label>
-                            <input asp-for="HourlyRate" class="form-control" />
-                            <span asp-validation-for="HourlyRate" class="text-danger"></span>
-                        </div>
-
                         <div class="form-group text-center">
                             <button type="submit" class="btn btn-primary">Register</button>
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Home</a>
                         </div>
                     </form>
-                </div>
-                <div class="card-footer text-center">
-                    <p>Already have an account? <a asp-action="Login">Login here</a></p>
                 </div>
             </div>
         </div>

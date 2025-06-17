@@ -4,10 +4,7 @@ using HRWebApp.Enums;
 namespace HRWebApp.Models.Authentication
 {
     public class RegisterViewModel
-
-
     {
-
         [Required(ErrorMessage = "First Name can't be blank ")]
         public string FirstName { get; set; } = string.Empty;
 
@@ -16,26 +13,15 @@ namespace HRWebApp.Models.Authentication
 
         [Required]
         [EmailAddress(ErrorMessage = "Email can't be blank ")]
-
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password can't be blank ")]
         [DataType(DataType.Password)]
-
         public string Password { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Confirm Password can't be blank ")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
-
-            [Required]
-            [Display(Name = "Department")]
-            public int DepartmentId { get; set; }
-
-            [Required]
-            [Display(Name = "Hourly Rate")]
-            public decimal HourlyRate { get; set; }
-        
-        //For userRoles
-        public UserTypeOptions UserType { get; set; } = UserTypeOptions.User;
     }
-
 }

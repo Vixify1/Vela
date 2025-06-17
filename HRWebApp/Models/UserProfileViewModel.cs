@@ -7,31 +7,33 @@ namespace HRWebApp.Models
         public int UserId { get; set; }
 
         [Display(Name = "Username")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
 
-        [Required]
-        [EmailAddress]
         [Display(Name = "Email")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "First Name is required")]
+        [StringLength(50, ErrorMessage = "First Name cannot exceed 50 characters")]
         [Display(Name = "First Name")]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Last Name is required")]
+        [StringLength(50, ErrorMessage = "Last Name cannot exceed 50 characters")]
         [Display(Name = "Last Name")]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         [Display(Name = "Full Name")]
         public string FullName => $"{FirstName} {LastName}";
-
-        [Display(Name = "Address")]
-        public string Address { get; set; }
 
         public bool HasEmployeeProfile { get; set; }
 
         public int? EmployeeId { get; set; }
 
         public bool IsAdmin { get; set; }
+
+        [Display(Name = "Department")]
+        public string? DepartmentName { get; set; }
+
+        public decimal? HourlyRate { get; set; }
     }
 }

@@ -2,7 +2,50 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="landing-page">
+    <div class="hero-section text-center">
+        <h1 class="display-3 text-white mb-4">Welcome to HR Web App</h1>
+        <p class="lead text-white mb-5">Streamline your HR operations with our comprehensive management system</p>
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <div class="cta-buttons">
+                <a href="@Url.Action("Login", "Authentication")" class="btn btn-light btn-lg">Login</a>
+            </div>
+        }
+        else
+        {
+            <div class="feature-cards mt-5">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title">Time Clock</h3>
+                                <p class="card-text">Track your work hours easily with our digital time clock system.</p>
+                                <a href="@Url.Action("Index", "TimeClock")" class="btn btn-primary">Clock In/Out</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title">Profile</h3>
+                                <p class="card-text">View and manage your employee profile and personal information.</p>
+                                <a href="@Url.Action("Index", "UserProfile")" class="btn btn-primary">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title">Attendance</h3>
+                                <p class="card-text">Check your attendance history and work hour records.</p>
+                                <a href="#" class="btn btn-primary">View Records</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

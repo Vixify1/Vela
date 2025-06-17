@@ -1,0 +1,86 @@
+﻿@model HRWebApp.Models.UserProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="container mt-4">
+    <h2>Your Profile</h2>
+
+    @if (TempData["StatusMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["StatusMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <form asp-action="UpdateProfile" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="IsAdmin" />
+        <input type="hidden" asp-for="HasEmployeeProfile" />
+        <input type="hidden" asp-for="EmployeeId" />
+
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Read-only fields displayed as text with input field sizing -->
+                <div class="form-group mb-3">
+                    <label class="control-label">Username</label>
+                    <div class="form-control bg-light border" style="pointer-events: none; cursor: not-allowed; user-select: none;">
+                        @Model.UserName
+                    </div>
+                    <small class="form-text text-muted">This is your display name</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label">Email</label>
+                    <div class="form-control bg-light border" style="pointer-events: none; cursor: not-allowed; user-select: none;">
+                        @Model.Email
+                    </div>
+                    <small class="form-text text-muted">Email cannot be changed</small>
+                </div>
+
+                <!-- Editable fields -->
+                <div class="form-group mb-3">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                @if (!Model.IsAdmin && Model.HasEmployeeProfile)
+                {
+                    <div class="form-group mb-3">
+                        <label class="control-label">Department</label>
+                        <div class="form-control bg-light border" style="pointer-events: none; cursor: not-allowed; user-select: none;">
+                            @Model.DepartmentName
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="control-label">Hourly Rate</label>
+                        <div class="form-control bg-light border" style="pointer-events: none; cursor: not-allowed; user-select: none;">
+                            $@(Model.HourlyRate?.ToString("F2") ?? "Not Set")
+                        </div>
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

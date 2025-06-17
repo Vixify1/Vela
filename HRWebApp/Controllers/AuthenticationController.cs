@@ -37,71 +37,55 @@ namespace HRWebApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Register()
         {
-            var departments = _departmentRepository.GetAll().ToList();
-            ViewBag.Departments = new SelectList(departments, "Id", "Name");
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName};
+                var user = new ApplicationUser 
+                { 
+                    UserName = model.Email, 
+                    Email = model.Email, 
+                    FirstName = model.FirstName, 
+                    LastName = model.LastName
+                };
+                
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    //Check the status of the button
-                    if (model.UserType == HRWebApp.Enums.UserTypeOptions.Admin)
+                    // Create User role if it doesn't exist
+                    if (await _roleManager.FindByNameAsync(UserTypeOptions.User.ToString()) is null)
                     {
-                        //create admin role
-                        if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
-                        {
-                            // Create an IdentityRole instead of ApplicationRole
-                            ApplicationRole applicationRole = new ApplicationRole()
-                            { Name = UserTypeOptions.Admin.ToString() };
+                        ApplicationRole applicationRole = new ApplicationRole()
+                        { Name = UserTypeOptions.User.ToString() };
 
-                            await _roleManager.CreateAsync(applicationRole);
-                        }
-                        //Add the new user into "Admin" Role
-                        await _userManager.AddToRoleAsync(user, UserTypeOptions.Admin.ToString());
+                        await _roleManager.CreateAsync(applicationRole);
                     }
+                    
+                    // Add the new user into "User" Role
+                    await _userManager.AddToRoleAsync(user, UserTypeOptions.User.ToString());
 
-                    else
+                    var employee = new Employee
                     {
-                        // Create User role if it doesn't exist
-                        if (await _roleManager.FindByNameAsync(UserTypeOptions.User.ToString()) is null)
-                        {
-                            ApplicationRole applicationRole = new ApplicationRole()
-                            { Name = UserTypeOptions.User.ToString() };
+                        UserId = user.Id,
+                        firstName = user.FirstName,
+                        lastName = user.LastName,   
+                        createdAt = DateTime.Now,
+                        updatedAt = DateTime.Now
+                    };
 
-                            await _roleManager.CreateAsync(applicationRole);
-                        }
-                        // Add the new user into "User" Role
-                        await _userManager.AddToRoleAsync(user, UserTypeOptions.User.ToString());
+                    // add the new employee to the repository 
+                    _employeeRepository.Add(employee);
 
-
-                        var employee = new Employee
-                        {
-                            UserId = user.Id,
-                            firstName = user.FirstName,
-                            lastName = user.LastName,   
-                            createdAt = DateTime.Now,
-                            updatedAt = DateTime.Now,
-                            DepartmentId = model.DepartmentId,
-                            HourlyRate = model.HourlyRate
-                        };
-
-                        // add the new employee to the repository 
-                        _employeeRepository.Add(employee);
-                    }
-
-
-                    await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -109,10 +93,7 @@ namespace HRWebApp.Controllers
                 {
                     ModelState.AddModelError("", error.Description);
                 }
-
             }
-            var departments = _departmentRepository.GetAll().ToList();
-            ViewBag.Departments = new SelectList(departments, "Id", "Name", model.DepartmentId);
             return View(model);
         }
 
@@ -125,13 +106,12 @@ namespace HRWebApp.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    //Admin using Areas
                     ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
                     if (user != null)
                     {
                         if (await _userManager.IsInRoleAsync(user, UserTypeOptions.Admin.ToString()))
                         {
-                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" }); //area is important , if not will go to the home/index of root
+                            return RedirectToAction("Index", "Home");
                         }
                     }
                     if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))

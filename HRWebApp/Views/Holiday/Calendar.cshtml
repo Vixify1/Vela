@@ -1,0 +1,45 @@
+﻿@model List<HRWebApp.Models.Admin.HolidayViewModel>
+
+@{
+    ViewData["Title"] = "Holiday Calendar";
+}
+
+<div class="container mt-4">
+    <h2>Holiday Calendar @ViewBag.CurrentYear</h2>
+    <p>
+        <a asp-action="Index" class="btn btn-secondary">Back to Holiday List</a>
+        <a asp-action="Create" class="btn btn-primary">Add New Holiday</a>
+    </p>
+
+    <div class="row">
+        @for (int month = 1; month <= 12; month++)
+        {
+            var monthName = new DateTime(ViewBag.CurrentYear, month, 1).ToString("MMMM");
+            var monthHolidays = Model.Where(h => h.Date.Month == month).ToList();
+
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>@monthName @ViewBag.CurrentYear</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (monthHolidays.Any())
+                        {
+                            @foreach (var holiday in monthHolidays)
+                            {
+                                <div class="alert alert-info p-2 mb-2">
+                                    <strong>@holiday.Date.Day</strong> - @holiday.Description
+                                    <br><small class="text-muted">@holiday.DayOfWeek</small>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">No holidays this month</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
