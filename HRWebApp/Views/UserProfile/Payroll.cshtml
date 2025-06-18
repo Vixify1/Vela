@@ -84,27 +84,27 @@
                         <div class="payroll-breakdown">
                             <div class="breakdown-item">
                                 <span>Hourly Rate:</span>
-                                <strong>$@record.HourlyRate.ToString("F2")</strong>
+                                <strong>@record.HourlyRate.ToString("N0") LEK</strong>
                             </div>
                             <div class="breakdown-item">
                                 <span>Standard Pay:</span>
-                                <strong>$@record.StandardPay.ToString("F2")</strong>
+                                <strong>@record.StandardPay.ToString("N0") LEK</strong>
                             </div>
                             <div class="breakdown-item">
                                 <span>Holiday Pay:</span>
-                                <strong>$@record.HolidayPay.ToString("F2")</strong>
+                                <strong>@record.HolidayPay.ToString("N0") LEK</strong>
                             </div>
                             <div class="breakdown-item">
                                 <span>Sunday Pay:</span>
-                                <strong>$@record.SundayPay.ToString("F2")</strong>
+                                <strong>@record.SundayPay.ToString("N0") LEK</strong>
                             </div>
                             <div class="breakdown-item gross">
                                 <span><strong>Gross Salary:</strong></span>
-                                <strong>$@record.GrossSalary.ToString("F2")</strong>
+                                <strong>@record.GrossSalary.ToString("N0") LEK</strong>
                             </div>
                             <div class="breakdown-item net">
                                 <span><strong>Net Salary:</strong></span>
-                                <strong>$@record.NetSalary.ToString("F2")</strong>
+                                <strong>@record.NetSalary.ToString("N0") LEK</strong>
                             </div>
                         </div>
                     </div>
@@ -151,9 +151,9 @@
                                 <tr>
                                     <td>@payroll.MonthYearDisplay</td>
                                     <td>@payroll.TotalHours.ToString("F1")</td>
-                                    <td>$@payroll.HourlyRate.ToString("F2")</td>
-                                    <td>$@payroll.GrossSalary.ToString("F2")</td>
-                                    <td>$@payroll.NetSalary.ToString("F2")</td>
+                                    <td>@payroll.HourlyRate.ToString("N0") LEK</td>
+                                    <td>@payroll.GrossSalary.ToString("N0") LEK</td>
+                                    <td>@payroll.NetSalary.ToString("N0") LEK</td>
                                     <td>
                                         <a href="@Url.Action("DownloadSalaryLetter", "UserProfile", new { payrollId = payroll.Id })" 
                                            class="btn btn-success btn-sm">

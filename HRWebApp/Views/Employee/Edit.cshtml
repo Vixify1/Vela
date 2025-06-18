@@ -52,8 +52,8 @@
                                 <div class="form-group mb-3">
                                     <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">$</span>
-                                        <input asp-for="HourlyRate" class="form-control" step="0.01" />
+                                        <input asp-for="HourlyRate" class="form-control" step="1" />
+                                        <span class="input-group-text">LEK</span>
                                     </div>
                                     <span asp-validation-for="HourlyRate" class="text-danger"></span>
                                 </div>
@@ -98,8 +98,8 @@
                         <div class="summary-item">
                             <strong>Email:</strong> @Model.Email
                         </div>
-                        <div class="summary-item">
-                            <strong>Current Rate:</strong> $@Model.HourlyRate.ToString("F2")/hr
+                        <div class="alert alert-info">
+                            <strong>Current Rate:</strong> @Model.HourlyRate.ToString("N0") LEK/hr
                         </div>
                         <div class="summary-item">
                             <strong>Department:</strong> @Model.DepartmentName

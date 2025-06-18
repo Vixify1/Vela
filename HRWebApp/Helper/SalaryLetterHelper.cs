@@ -16,6 +16,11 @@ namespace HRWebApp.Helper
                 PdfWriter.GetInstance(document, memoryStream);
                 document.Open();
 
+                // Define custom colors
+                var veryLightGray = new BaseColor(248, 248, 248); // Very light gray
+                var lightGray = BaseColor.LightGray;
+                var mediumGray = new BaseColor(220, 220, 220); // Medium gray
+
                 // Add company header
                 var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.DarkGray);
                 var headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.Black);
@@ -63,45 +68,89 @@ namespace HRWebApp.Helper
 
                 // Add table headers
                 var headerCell1 = new PdfPCell(new Phrase("PARTICULARS", boldFont));
-                headerCell1.BackgroundColor = BaseColor.LightGray;
+                headerCell1.BackgroundColor = mediumGray;
                 headerCell1.Padding = 8;
                 table.AddCell(headerCell1);
 
                 var headerCell2 = new PdfPCell(new Phrase("AMOUNT", boldFont));
-                headerCell2.BackgroundColor = BaseColor.LightGray;
+                headerCell2.BackgroundColor = mediumGray;
                 headerCell2.Padding = 8;
                 table.AddCell(headerCell2);
 
                 // Add salary details
                 AddTableRow(table, "Period:", model.MonthYearDisplay, normalFont);
-                AddTableRow(table, "Hourly Rate:", $"${model.HourlyRate:F2}", normalFont);
+                AddTableRow(table, "Hourly Rate:", $"{model.HourlyRate:N0} LEK", normalFont);
                 AddTableRow(table, "Standard Hours:", $"{model.StandardHours:F1} hrs", normalFont);
                 AddTableRow(table, "Holiday Hours (1.5x):", $"{model.HolidayHours:F1} hrs", normalFont);
                 AddTableRow(table, "Sunday Hours (1.75x):", $"{model.SundayHours:F1} hrs", normalFont);
                 AddTableRow(table, "Total Hours:", $"{model.TotalHours:F1} hrs", normalFont);
                 AddTableRow(table, "", "", normalFont); // Empty row for spacing
-                AddTableRow(table, "Standard Pay:", $"${model.StandardPay:F2}", normalFont);
-                AddTableRow(table, "Holiday Pay:", $"${model.HolidayPay:F2}", normalFont);
-                AddTableRow(table, "Sunday Pay:", $"${model.SundayPay:F2}", normalFont);
+                
+                // Pay breakdown
+                AddTableRow(table, "Standard Pay:", $"{model.StandardPay:N0} LEK", normalFont);
+                AddTableRow(table, "Holiday Pay:", $"{model.HolidayPay:N0} LEK", normalFont);
+                AddTableRow(table, "Sunday Pay:", $"{model.SundayPay:N0} LEK", normalFont);
 
                 // Gross salary row with bold
                 var grossCell1 = new PdfPCell(new Phrase("Gross Salary:", boldFont));
                 grossCell1.Padding = 8;
+                grossCell1.BackgroundColor = lightGray;
                 table.AddCell(grossCell1);
-                var grossCell2 = new PdfPCell(new Phrase($"${model.GrossSalary:F2}", boldFont));
+                var grossCell2 = new PdfPCell(new Phrase($"{model.GrossSalary:N0} LEK", boldFont));
                 grossCell2.Padding = 8;
+                grossCell2.BackgroundColor = lightGray;
                 table.AddCell(grossCell2);
 
-                // Net salary row with bold
+                // Add empty row for spacing
+                AddTableRow(table, "", "", normalFont);
+
+                // Deductions section header
+                var deductionHeaderCell1 = new PdfPCell(new Phrase("DEDUCTIONS:", boldFont));
+                deductionHeaderCell1.Padding = 8;
+                deductionHeaderCell1.BackgroundColor = veryLightGray;
+                table.AddCell(deductionHeaderCell1);
+                var deductionHeaderCell2 = new PdfPCell(new Phrase("", boldFont));
+                deductionHeaderCell2.Padding = 8;
+                deductionHeaderCell2.BackgroundColor = veryLightGray;
+                table.AddCell(deductionHeaderCell2);
+
+                // Individual deductions
+                AddTableRow(table, "Social Security (9.5%):", $"{model.SocialSecurityDeduction:N0} LEK", normalFont);
+                AddTableRow(table, "Health Insurance (1.7%):", $"{model.HealthInsuranceDeduction:N0} LEK", normalFont);
+                AddTableRow(table, "Income Tax:", $"{model.IncomeTaxDeduction:N0} LEK", normalFont);
+
+                // Total deductions row with bold
+                var totalDeductionsCell1 = new PdfPCell(new Phrase("Total Deductions:", boldFont));
+                totalDeductionsCell1.Padding = 8;
+                totalDeductionsCell1.BackgroundColor = veryLightGray;
+                table.AddCell(totalDeductionsCell1);
+                var totalDeductionsCell2 = new PdfPCell(new Phrase($"{model.TotalDeductions:N0} LEK", boldFont));
+                totalDeductionsCell2.Padding = 8;
+                totalDeductionsCell2.BackgroundColor = veryLightGray;
+                table.AddCell(totalDeductionsCell2);
+
+                // Add empty row for spacing
+                AddTableRow(table, "", "", normalFont);
+
+                // Net salary row with bold and highlighted
                 var netCell1 = new PdfPCell(new Phrase("Net Salary:", boldFont));
                 netCell1.Padding = 8;
+                netCell1.BackgroundColor = lightGray;
                 table.AddCell(netCell1);
-                var netCell2 = new PdfPCell(new Phrase($"${model.NetSalary:F2}", boldFont));
+                var netCell2 = new PdfPCell(new Phrase($"{model.NetSalary:N0} LEK", boldFont));
                 netCell2.Padding = 8;
+                netCell2.BackgroundColor = lightGray;
                 table.AddCell(netCell2);
 
                 document.Add(table);
                 document.Add(new Paragraph(" "));
+                document.Add(new Paragraph(" "));
+
+                // Add calculation explanation
+                var calculationNote = new Paragraph("Note: Net salary is calculated as Gross Salary minus all applicable deductions as per Albanian tax regulations.", 
+                    FontFactory.GetFont(FontFactory.HELVETICA, 9, BaseColor.DarkGray));
+                calculationNote.Alignment = Element.ALIGN_JUSTIFIED;
+                document.Add(calculationNote);
                 document.Add(new Paragraph(" "));
 
                 // Closing statement

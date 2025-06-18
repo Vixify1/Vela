@@ -73,10 +73,10 @@
             <div class="col-md-3">
                 <div class="stat-card stat-card-info">
                     <div class="stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
+                        <i class="fas fa-coins"></i>
                     </div>
                     <div class="stat-content">
-                        <h3>$@Model.PayrollRecords.Sum(p => p.GrossSalary).ToString("F0")</h3>
+                        <h3>@Model.PayrollRecords.Sum(p => p.GrossSalary).ToString("N0") LEK</h3>
                         <p>Gross Payroll</p>
                     </div>
                 </div>
@@ -84,10 +84,10 @@
             <div class="col-md-3">
                 <div class="stat-card stat-card-warning">
                     <div class="stat-icon">
-                        <i class="fas fa-hand-holding-usd"></i>
+                        <i class="fas fa-hand-holding-heart"></i>
                     </div>
                     <div class="stat-content">
-                        <h3>$@Model.PayrollRecords.Sum(p => p.NetSalary).ToString("F0")</h3>
+                        <h3>@Model.PayrollRecords.Sum(p => p.NetSalary).ToString("N0") LEK</h3>
                         <p>Net Payroll</p>
                     </div>
                 </div>
@@ -130,9 +130,9 @@
                                     <td>
                                         <span class="badge bg-light text-dark">@payroll.TotalHours.ToString("F1") hrs</span>
                                     </td>
-                                    <td><strong>$@payroll.HourlyRate.ToString("F2")</strong></td>
-                                    <td><strong class="text-success">$@payroll.GrossSalary.ToString("F2")</strong></td>
-                                    <td><strong class="text-primary">$@payroll.NetSalary.ToString("F2")</strong></td>
+                                    <td><strong>@payroll.HourlyRate.ToString("N0") LEK</strong></td>
+                                    <td><strong class="text-success">@payroll.GrossSalary.ToString("N0") LEK</strong></td>
+                                    <td><strong class="text-primary">@payroll.NetSalary.ToString("N0") LEK</strong></td>
                                     <td>
                                         <a href="@Url.Action("DownloadSalaryLetter", "Payroll", new { payrollId = payroll.Id })" 
                                            class="btn btn-primary btn-sm">

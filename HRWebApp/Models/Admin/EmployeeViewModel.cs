@@ -28,7 +28,7 @@ namespace HRWebApp.Models.Admin
 
         [Required(ErrorMessage = "Hourly Rate is required")]
         [Display(Name = "Hourly Rate")]
-        [Range(0.01, 999.99, ErrorMessage = "Hourly Rate must be between $0.01 and $999.99")]
+        [Range(1, 100000, ErrorMessage = "Hourly Rate must be between 1 and 100,000 LEK")]
         public decimal HourlyRate { get; set; }
 
         [Required(ErrorMessage = "Department is required")]

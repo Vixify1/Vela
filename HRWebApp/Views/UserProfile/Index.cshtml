@@ -88,7 +88,7 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label">Hourly Rate</label>
                                         <div class="form-control bg-light" style="pointer-events: none;">
-                                            $@(Model.HourlyRate?.ToString("F2") ?? "Not Set")
+                                            @(Model.HourlyRate?.ToString("N0") ?? "Not Set") LEK
                                         </div>
                                     </div>
                                 </div>

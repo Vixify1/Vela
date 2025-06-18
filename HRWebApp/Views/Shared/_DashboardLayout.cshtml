@@ -72,6 +72,18 @@
                                 Holidays
                             </a>
                         </li>
+                        
+                        <!-- NEW: Conditional Admin Creation Link -->
+                        @if (HRWebApp.Controllers.AuthenticationController.IsAdminCreationEnabled)
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Authentication" asp-action="CreateAdmin" 
+                                   class="nav-link @(ViewContext.RouteData.Values["Controller"].ToString() == "Authentication" && ViewContext.RouteData.Values["Action"].ToString() == "CreateAdmin" ? "active" : "")">
+                                    <i class="fas fa-user-shield"></i>
+                                    Create Admin
+                                </a>
+                            </li>
+                        }
                     }
                     else
                     {

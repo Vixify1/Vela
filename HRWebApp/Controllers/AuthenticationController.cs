@@ -14,11 +14,18 @@ namespace HRWebApp.Controllers
 {
     public class AuthenticationController : Controller
     {
+        // ⚠️ TOGGLE THIS TO ENABLE/DISABLE ADMIN CREATION
+        private const bool ENABLE_ADMIN_CREATION = false; // Change to false to disable
+
+        // Make this accessible to views
+        public static bool IsAdminCreationEnabled => ENABLE_ADMIN_CREATION;
+
         public readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IEntitiesRepository<Employee> _employeeRepository;
         private readonly IEntitiesRepository<Department> _departmentRepository;
+
         public AuthenticationController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager, IEntitiesRepository<Employee> employeeRepository, IEntitiesRepository<Department> departmentRepository)
         {
             _userManager = userManager;
@@ -26,9 +33,11 @@ namespace HRWebApp.Controllers
             _roleManager = roleManager;
             _employeeRepository = employeeRepository;
             _departmentRepository = departmentRepository;
-
         }
 
+        // ... rest of your existing methods remain the same ...
+
+        // Existing Register method for regular users
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult Register()
@@ -43,14 +52,14 @@ namespace HRWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser 
-                { 
-                    UserName = model.Email, 
-                    Email = model.Email, 
-                    FirstName = model.FirstName, 
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
                     LastName = model.LastName
                 };
-                
+
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
@@ -63,7 +72,7 @@ namespace HRWebApp.Controllers
 
                         await _roleManager.CreateAsync(applicationRole);
                     }
-                    
+
                     // Add the new user into "User" Role
                     await _userManager.AddToRoleAsync(user, UserTypeOptions.User.ToString());
 
@@ -71,7 +80,7 @@ namespace HRWebApp.Controllers
                     {
                         UserId = user.Id,
                         firstName = user.FirstName,
-                        lastName = user.LastName,   
+                        lastName = user.LastName,
                         createdAt = DateTime.Now,
                         updatedAt = DateTime.Now
                     };
@@ -90,6 +99,79 @@ namespace HRWebApp.Controllers
             return View(model);
         }
 
+        // NEW: Admin Registration Methods
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateAdmin()
+        {
+            if (!ENABLE_ADMIN_CREATION)
+            {
+                return NotFound(); // Hide the functionality when disabled
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAdmin(AdminRegisterViewModel model)
+        {
+            if (!ENABLE_ADMIN_CREATION)
+            {
+                return NotFound(); // Hide the functionality when disabled
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Check if user already exists
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("Email", "A user with this email already exists.");
+                    return View(model);
+                }
+
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    IsActive = true,
+                    CreatedOnUtc = DateTime.UtcNow,
+                    EmailConfirmed = true // Admins don't need email confirmation
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    // Ensure Admin role exists
+                    if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
+                    {
+                        ApplicationRole adminRole = new ApplicationRole()
+                        { Name = UserTypeOptions.Admin.ToString() };
+
+                        await _roleManager.CreateAsync(adminRole);
+                    }
+
+                    // Add the new user to "Admin" Role
+                    await _userManager.AddToRoleAsync(user, UserTypeOptions.Admin.ToString());
+
+                    TempData["Success"] = $"Admin user '{model.Email}' has been created successfully!";
+                    return RedirectToAction("CreateAdmin");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return View(model);
+        }
+
+        // Existing Login method
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? ReturnUrl)
@@ -118,6 +200,7 @@ namespace HRWebApp.Controllers
             return View(model);
         }
 
+        // Existing Logout method
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

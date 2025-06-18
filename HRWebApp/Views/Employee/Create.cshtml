@@ -61,10 +61,11 @@
                                 <div class="form-group mb-3">
                                     <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">$</span>
-                                        <input asp-for="HourlyRate" class="form-control" step="0.01" placeholder="0.00" />
+                                        <input asp-for="HourlyRate" class="form-control" step="1" placeholder="0" />
+                                        <span class="input-group-text">LEK</span>
                                     </div>
                                     <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                                    <small class="form-text text-muted">Enter hourly rate in Albanian LEK</small>
                                 </div>
                             </div>
                             <div class="col-md-6">

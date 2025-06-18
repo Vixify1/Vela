@@ -50,10 +50,10 @@
         <div class="col-md-3">
             <div class="stat-card stat-card-warning">
                 <div class="stat-icon">
-                    <i class="fas fa-dollar-sign"></i>
+                    <i class="fas fa-coins"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>$@(Model.Any() ? Model.Average(e => e.HourlyRate).ToString("F0") : "0")</h3>
+                    <h3>@(Model.Any() ? Model.Average(e => e.HourlyRate).ToString("N0") : "0") LEK</h3>
                     <p>Avg. Hourly Rate</p>
                 </div>
             </div>
@@ -98,7 +98,7 @@
                                         <span class="badge bg-light text-dark">@item.DepartmentName</span>
                                     </td>
                                     <td>
-                                        <strong>$@item.HourlyRate.ToString("F2")</strong>
+                                        <strong>@item.HourlyRate.ToString("N0") LEK</strong>
                                     </td>
                                     <td>
                                         @if (item.HourlyRate > 0)
