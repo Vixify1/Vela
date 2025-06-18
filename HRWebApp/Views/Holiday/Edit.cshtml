@@ -2,33 +2,66 @@
 
 @{
     ViewData["Title"] = "Edit Holiday";
+    Layout = "_DashboardLayout";
 }
 
-<div class="container mt-4">
-    <h2>Edit Holiday</h2>
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="welcome-header">
+        <h1>Edit Holiday</h1>
+        <p class="text-muted">Update holiday information</p>
+    </div>
+
     <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-
-                <div class="form-group mb-3">
-                    <label asp-for="Date" class="control-label"></label>
-                    <input asp-for="Date" class="form-control" type="date" />
-                    <span asp-validation-for="Date" class="text-danger"></span>
+        <div class="col-lg-8">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Holiday Details</h5>
                 </div>
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
 
-                <div class="form-group mb-3">
-                    <label asp-for="Description" class="control-label"></label>
-                    <input asp-for="Description" class="form-control" />
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                    <div class="form-group mb-3">
+                        <label asp-for="Date" class="control-label">Holiday Date</label>
+                        <input asp-for="Date" class="form-control" type="date" />
+                        <span asp-validation-for="Date" class="text-danger"></span>
+                    </div>
 
-                <div class="form-group">
-                    <input type="submit" value="Save Changes" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    <div class="form-group mb-4">
+                        <label asp-for="Description" class="control-label">Holiday Name</label>
+                        <input asp-for="Description" class="form-control" placeholder="e.g., New Year's Day, Christmas Day" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h6>Current Holiday</h6>
                 </div>
-            </form>
+                <div class="holiday-preview">
+                    <div class="text-center p-3">
+                        <div class="holiday-date mb-2">
+                            <strong>@Model.FormattedDate</strong>
+                        </div>
+                        <div class="holiday-day text-muted">
+                            @Model.DayOfWeek
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

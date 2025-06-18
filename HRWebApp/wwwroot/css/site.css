@@ -374,3 +374,16 @@ body {
         text-decoration: none;
         transform: scale(1.05);
     }
+
+/* Account request alert styling */
+.login-card .alert-info {
+    background-color: #e8f4f8;
+    border: 1px solid var(--turquoise-light);
+    color: var(--turquoise-dark);
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.login-card .alert-info i {
+    color: var(--turquoise);
+}

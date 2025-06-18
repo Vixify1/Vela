@@ -9,4 +9,6 @@ public class DepartmentViewModel
     [Display(Name = "Department Name")]
     [StringLength(100, ErrorMessage = "Department name cannot exceed 100 characters.")]
     public string Name { get; set; }
+
+    public int EmployeeCount { get; set; }
 }

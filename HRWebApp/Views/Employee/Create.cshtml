@@ -2,58 +2,127 @@
 
 @{
     ViewData["Title"] = "Create Employee";
+    Layout = "_DashboardLayout";
 }
 
-<div class="container mt-4">
-    <h2>Create Employee</h2>
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="welcome-header">
+        <h1>Create New Employee</h1>
+        <p class="text-muted">Add a new employee to the system</p>
+    </div>
+
     <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="FirstName" class="control-label"></label>
-                    <input asp-for="FirstName" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
+        <div class="col-lg-8">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Employee Information</h5>
                 </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="LastName" class="control-label"></label>
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="FirstName" class="form-label">First Name</label>
+                                    <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="LastName" class="form-label">Last Name</label>
+                                    <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Email" class="form-label">Email Address</label>
+                                    <input asp-for="Email" class="form-control" placeholder="Enter email address" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Password" class="form-label">Password</label>
+                                    <input asp-for="Password" class="form-control" placeholder="Enter password" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Password" class="control-label"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="HourlyRate" class="form-control" step="0.01" placeholder="0.00" />
+                                    </div>
+                                    <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="DepartmentId" class="form-label">Department</label>
+                                    <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
+                                        <option value="">-- Select Department --</option>
+                                    </select>
+                                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="HourlyRate" class="control-label"></label>
-                    <input asp-for="HourlyRate" class="form-control" step="0.01" />
-                    <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Create Employee
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
                 </div>
+            </div>
+        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="DepartmentId" class="control-label"></label>
-                    <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
-                        <option value="">-- Select Department --</option>
-                    </select>
-                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        <!-- Helper Information -->
+        <div class="col-lg-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Guidelines</h5>
                 </div>
-
-                <div class="form-group">
-                    <input type="submit" value="Create Employee" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <div class="card-body">
+                    <div class="guidelines">
+                        <div class="guideline-item">
+                            <i class="fas fa-user text-primary"></i>
+                            <div>
+                                <h6>Personal Information</h6>
+                                <p class="small text-muted">Enter the employee's full name and email address.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="fas fa-lock text-warning"></i>
+                            <div>
+                                <h6>Password</h6>
+                                <p class="small text-muted">Create a temporary password for the employee's first login.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="fas fa-dollar-sign text-success"></i>
+                            <div>
+                                <h6>Hourly Rate</h6>
+                                <p class="small text-muted">Set the employee's hourly compensation rate.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

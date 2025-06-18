@@ -2,53 +2,111 @@
 
 @{
     ViewData["Title"] = "Edit Employee";
+    Layout = "_DashboardLayout";
 }
 
-<div class="container mt-4">
-    <h2>Edit Employee</h2>
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="welcome-header">
+        <h1>Edit Employee</h1>
+        <p class="text-muted">Update employee information - @Model.FullName</p>
+    </div>
+
     <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-
-                <div class="form-group mb-3">
-                    <label asp-for="FirstName" class="control-label"></label>
-                    <input asp-for="FirstName" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
+        <div class="col-lg-8">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Employee Information</h5>
                 </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="LastName" class="control-label"></label>
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="FirstName" class="form-label">First Name</label>
+                                    <input asp-for="FirstName" class="form-control" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="LastName" class="form-label">Last Name</label>
+                                    <input asp-for="LastName" class="form-control" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Email" class="form-label">Email Address</label>
+                                    <input asp-for="Email" class="form-control bg-light" readonly />
+                                    <small class="form-text text-muted">Email cannot be changed</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="HourlyRate" class="form-control" step="0.01" />
+                                    </div>
+                                    <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="HourlyRate" class="control-label"></label>
-                    <input asp-for="HourlyRate" class="form-control" step="0.01" />
-                    <span asp-validation-for="HourlyRate" class="text-danger"></span>
-                </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="DepartmentId" class="form-label">Department</label>
+                            <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
+                                <option value="">-- Select Department --</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="DepartmentId" class="control-label"></label>
-                    <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
-                        <option value="">-- Select Department --</option>
-                    </select>
-                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Employee
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
                 </div>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <input type="submit" value="Save Changes" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        <!-- Employee Summary -->
+        <div class="col-lg-4">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Employee Summary</h5>
                 </div>
-            </form>
+                <div class="card-body">
+                    <div class="employee-summary">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-user-circle fa-4x text-muted"></i>
+                            <h6 class="mt-2">@Model.FullName</h6>
+                            <span class="badge bg-primary">Employee</span>
+                        </div>
+                        <hr>
+                        <div class="summary-item">
+                            <strong>Email:</strong> @Model.Email
+                        </div>
+                        <div class="summary-item">
+                            <strong>Current Rate:</strong> $@Model.HourlyRate.ToString("F2")/hr
+                        </div>
+                        <div class="summary-item">
+                            <strong>Department:</strong> @Model.DepartmentName
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

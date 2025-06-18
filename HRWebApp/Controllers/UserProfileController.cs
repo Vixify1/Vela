@@ -277,6 +277,50 @@ namespace HRWebApp.Controllers
                 Text = year.ToString()
             }).ToList();
         }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                
+                if (result.Succeeded)
+                {
+                    TempData["StatusMessage"] = "Your password has been changed successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while changing your password. Please try again.");
+            }
+
+            return View(model);
+        }
     }
 }
 

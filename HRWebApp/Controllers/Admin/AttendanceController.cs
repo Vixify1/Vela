@@ -27,18 +27,30 @@ namespace HRWebApp.Controllers.Admin
         }
 
         // Admin-specific monthly details view
-        public IActionResult Index()
+        public IActionResult Index(int? employeeId = null, int? selectedMonth = null, int? selectedYear = null)
         {
             var currentDate = DateTime.Now;
             var model = new MonthlyAttendanceViewModel
             {
-                SelectedMonth = currentDate.Month,
-                SelectedYear = currentDate.Year,
+                EmployeeId = employeeId ?? 0,
+                SelectedMonth = selectedMonth ?? currentDate.Month,
+                SelectedYear = selectedYear ?? currentDate.Year,
                 IsAdminView = true,
                 Months = GetMonthSelectList(),
                 Years = GetYearSelectList(),
                 Employees = GetEmployeeSelectList()
             };
+
+            // If parameters are provided, load the data immediately
+            if (employeeId.HasValue && employeeId > 0)
+            {
+                var selectedEmployee = _employeeRepository.Get(employeeId.Value);
+                if (selectedEmployee != null)
+                {
+                    model.EmployeeName = $"{selectedEmployee.firstName} {selectedEmployee.lastName}";
+                    LoadAttendanceRecords(model);
+                }
+            }
 
             return View(model);
         }
@@ -64,14 +76,16 @@ namespace HRWebApp.Controllers.Admin
             return View(model);
         }
 
-        public IActionResult Create(int? employeeId = null)
+        public IActionResult Create(int? employeeId = null, int? selectedMonth = null, int? selectedYear = null)
         {
             var model = new AttendanceLogEditViewModel
             {
                 Date = DateTime.Today,
                 ClockInTime = new TimeSpan(9, 0, 0), // Default 9:00 AM
                 EmployeeId = employeeId ?? 0,
-                Employees = GetEmployeeSelectListForAdmin()
+                Employees = GetEmployeeSelectListForAdmin(),
+                SelectedMonth = selectedMonth,
+                SelectedYear = selectedYear
             };
 
             return View(model);
@@ -100,11 +114,16 @@ namespace HRWebApp.Controllers.Admin
                 };
 
                 _attendanceRepository.Add(attendanceLog);
+                
+                // Use the stored filter parameters for redirect, or fall back to the record's date
+                var redirectMonth = model.SelectedMonth ?? model.Date.Month;
+                var redirectYear = model.SelectedYear ?? model.Date.Year;
+                
                 return RedirectToAction("MonthlyDetails", "TimeClock", new
                 {
                     employeeId = model.EmployeeId,
-                    selectedMonth = model.Date.Month,
-                    selectedYear = model.Date.Year
+                    selectedMonth = redirectMonth,
+                    selectedYear = redirectYear
                 });
             }
 
@@ -161,6 +180,8 @@ namespace HRWebApp.Controllers.Admin
                 attendanceLog.ClockOut = model.ClockOutDateTime;
 
                 _attendanceRepository.Update(attendanceLog);
+                
+                // Redirect back to TimeClock MonthlyDetails instead of Attendance Index
                 return RedirectToAction("MonthlyDetails", "TimeClock", new
                 {
                     employeeId = model.EmployeeId,
@@ -203,18 +224,20 @@ namespace HRWebApp.Controllers.Admin
             if (attendanceLog != null)
             {
                 var employeeId = attendanceLog.EmployeeId;
-                var date = attendanceLog.Date;
-
+                var month = attendanceLog.Date.Month;
+                var year = attendanceLog.Date.Year;
+                
                 _attendanceRepository.Remove(attendanceLog);
-
+                
+                // Redirect back to TimeClock MonthlyDetails instead of Attendance Index
                 return RedirectToAction("MonthlyDetails", "TimeClock", new
                 {
                     employeeId = employeeId,
-                    selectedMonth = date.Month,
-                    selectedYear = date.Year
+                    selectedMonth = month,
+                    selectedYear = year
                 });
             }
-
+            
             return RedirectToAction("MonthlyDetails", "TimeClock");
         }
 

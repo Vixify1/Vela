@@ -2,52 +2,105 @@
 
 @{
     ViewData["Title"] = "Holiday Calendar";
+    Layout = "_DashboardLayout";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Holiday Calendar @ViewBag.CurrentYear</h2>
-        <div>
-            <a asp-action="List" class="btn btn-outline-primary me-2">
-                <i class="fas fa-list"></i> List View
-            </a>
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add New Holiday
-            </a>
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="welcome-header">
+        <h1>Holiday Calendar @ViewBag.CurrentYear</h1>
+        <p class="text-muted">Manage company holidays and time off</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="dashboard-card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5>Holiday Management</h5>
+            <div class="btn-group">
+                <a asp-action="List" class="btn btn-outline-primary">
+                    <i class="fas fa-list"></i> List View
+                </a>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Holiday
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-calendar-alt me-2"></i>
+                <strong>Holiday Calendar Overview</strong> - View all holidays organized by month. Use the List View button above for detailed management options.
+            </div>
         </div>
     </div>
 
-    <div class="alert alert-info" role="alert">
-        <strong>Holiday Calendar Overview</strong> - View all holidays organized by month. Use the List View button above for detailed management options.
+    <!-- Holiday Stats -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card stat-card-primary">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>@Model.Count</h3>
+                    <p>Total Holidays</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card stat-card-success">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-week"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>@Model.Count(h => h.Date >= DateTime.Today)</h3>
+                    <p>Upcoming Holidays</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card stat-card-info">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>@Model.Where(h => h.Date.Month == DateTime.Now.Month).Count()</h3>
+                    <p>This Month</p>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- Monthly Holiday Grid -->
     <div class="row">
         @for (int month = 1; month <= 12; month++)
         {
             var monthName = new DateTime(ViewBag.CurrentYear, month, 1).ToString("MMMM");
             var monthHolidays = Model.Where(h => h.Date.Month == month).ToList();
 
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">@monthName</h5>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="dashboard-card h-100">
+                    <div class="card-header holiday-month-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar me-2"></i>@monthName
+                        </h5>
                     </div>
                     <div class="card-body">
                         @if (monthHolidays.Any())
                         {
                             @foreach (var holiday in monthHolidays)
                             {
-                                <div class="alert alert-success p-2 mb-2">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <strong>@holiday.Date.Day</strong> - @holiday.Description
-                                            <br><small class="text-muted">@holiday.DayOfWeek</small>
-                                        </div>
-                                        <div class="btn-group btn-group-sm">
-                                            <a asp-action="Edit" asp-route-id="@holiday.Id" class="btn btn-outline-primary btn-sm" title="Edit">
+                                <div class="holiday-item">
+                                    <div class="holiday-date">
+                                        <span class="date-number">@holiday.Date.Day</span>
+                                        <span class="date-day">@holiday.DayOfWeek</span>
+                                    </div>
+                                    <div class="holiday-info">
+                                        <h6>@holiday.Description</h6>
+                                        <div class="holiday-actions">
+                                            <a asp-action="Edit" asp-route-id="@holiday.Id" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@holiday.Id" class="btn btn-outline-danger btn-sm" title="Delete">
+                                            <a asp-action="Delete" asp-route-id="@holiday.Id" class="btn btn-sm btn-outline-danger">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
@@ -57,7 +110,10 @@
                         }
                         else
                         {
-                            <p class="text-muted text-center">No holidays this month</p>
+                            <div class="text-center text-muted py-3">
+                                <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                                <p class="mb-0">No holidays this month</p>
+                            </div>
                         }
                     </div>
                 </div>

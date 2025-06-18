@@ -2,155 +2,193 @@
 
 @{
     ViewData["Title"] = "Monthly Attendance Details";
+    Layout = "_DashboardLayout";
 }
 
-<div class="container mt-4">
-    <h2>Monthly Attendance Details</h2>
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="welcome-header">
+        <h1>Monthly Attendance Details</h1>
+        <p class="text-muted">View your attendance records and work hours</p>
+    </div>
 
-
-
-    <form asp-action="MonthlyDetails" method="post">
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <label asp-for="SelectedMonth" class="control-label"></label>
-                <select asp-for="SelectedMonth" asp-items="Model.Months" class="form-control">
-                    <option value="">-- Select Month --</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label asp-for="SelectedYear" class="control-label"></label>
-                <select asp-for="SelectedYear" asp-items="Model.Years" class="form-control">
-                    <option value="">-- Select Year --</option>
-                </select>
-            </div>
-
-            @if (Model.IsAdminView)
-            {
-                <div class="col-md-4">
-                    <label asp-for="EmployeeId" class="control-label">Employee</label>
-                    <select asp-for="EmployeeId" asp-items="Model.Employees" class="form-control">
-                        <option value="">-- Select Employee --</option>
-                    </select>
-                </div>
-            }
-
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary">View Details</button>
-            </div>
+    <!-- Filter Section -->
+    <div class="dashboard-card mb-4">
+        <div class="card-header">
+            <h5>Filter Attendance Records</h5>
         </div>
-    </form>
+        <div class="card-body">
+            <form asp-action="MonthlyDetails" method="post">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label asp-for="SelectedMonth" class="form-label">Month</label>
+                        <select asp-for="SelectedMonth" asp-items="Model.Months" class="form-control">
+                            <option value="">-- Select Month --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label asp-for="SelectedYear" class="form-label">Year</label>
+                        <select asp-for="SelectedYear" asp-items="Model.Years" class="form-control">
+                            <option value="">-- Select Year --</option>
+                        </select>
+                    </div>
+
+                    @if (Model.IsAdminView)
+                    {
+                        <div class="col-md-4">
+                            <label asp-for="EmployeeId" class="form-label">Employee</label>
+                            <select asp-for="EmployeeId" asp-items="Model.Employees" class="form-control">
+                                <option value="">-- Select Employee --</option>
+                            </select>
+                        </div>
+                    }
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">View Details</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     @if (Model.IsAdminView && Model.EmployeeId == 0)
     {
         <!-- Instructional Message for Admin -->
-        <div class="alert alert-info" role="alert">
-            <h5 class="alert-heading">Select Employee and Month</h5>
-            <p class="mb-0">Please select an employee, month, and year to view attendance records.</p>
+        <div class="dashboard-card">
+            <div class="card-body">
+                <div class="alert alert-info" role="alert">
+                    <h5 class="alert-heading">Select Employee and Month</h5>
+                    <p class="mb-0">Please select an employee, month, and year to view attendance records.</p>
+                </div>
+            </div>
         </div>
     }
 
     @if (Model.AttendanceRecords.Any())
     {
-        <div class="card mb-4">
+        <!-- Summary Card -->
+        <div class="dashboard-card mb-4">
             <div class="card-header">
                 <h5>@Model.MonthYearDisplay Summary - @Model.EmployeeName</h5>
             </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
-                        <strong>Total Days Worked:</strong> @Model.TotalDaysWorked
+                        <div class="stat-summary">
+                            <h3>@Model.TotalDaysWorked</h3>
+                            <p>Total Days Worked</p>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <strong>Total Hours:</strong> @Model.TotalHoursWorked.ToString("F2")
+                        <div class="stat-summary">
+                            <h3>@Model.TotalHoursWorked.ToString("F2")</h3>
+                            <p>Total Hours</p>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <strong>Records Found:</strong> @Model.AttendanceRecords.Count
+                        <div class="stat-summary">
+                            <h3>@Model.AttendanceRecords.Count</h3>
+                            <p>Records Found</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card">
+        <!-- Attendance Records -->
+        <div class="dashboard-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Daily Attendance Log</h5>
                 @if (Model.IsAdminView && Model.EmployeeId > 0)
                 {
-                    <a asp-controller="Attendance" asp-action="Create" asp-route-employeeId="@Model.EmployeeId" class="btn btn-primary btn-sm">Add New Record</a>
+                    <a asp-controller="Attendance" asp-action="Create" 
+                       asp-route-employeeId="@Model.EmployeeId" 
+                       asp-route-selectedMonth="@Model.SelectedMonth" 
+                       asp-route-selectedYear="@Model.SelectedYear" 
+                       class="btn btn-primary btn-sm">Add New Record</a>
                 }
             </div>
             <div class="card-body">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Day</th>
-                            <th>Clock In</th>
-                            <th>Clock Out</th>
-                            <th>Hours Worked</th>
-                            <th>Status</th>
-                            @if (Model.IsAdminView)
-                            {
-                                <th>Actions</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var record in Model.AttendanceRecords)
-                        {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
                             <tr>
-                                <td>@record.Date.ToString("MMM dd, yyyy")</td>
-                                <td>@record.DayOfWeek</td>
-                                <td>@record.ClockInTime</td>
-                                <td>@record.ClockOutTime</td>
-                                <td>
-                                    @if (record.WorkedHours.HasValue)
-                                    {
-                                        @record.WorkedHours.Value.ToString("F2")
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">-</span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (record.Status == "Complete")
-                                    {
-                                        <span class="badge bg-success">@record.Status</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-warning">@record.Status</span>
-                                    }
-                                </td>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Clock In</th>
+                                <th>Clock Out</th>
+                                <th>Hours Worked</th>
+                                <th>Status</th>
                                 @if (Model.IsAdminView)
                                 {
-                                    <td>
-                                        <a asp-controller="Attendance" asp-action="Edit" asp-route-id="@record.Id" class="btn btn-sm btn-primary">Edit</a>
-                                        <a asp-controller="Attendance" asp-action="Delete" asp-route-id="@record.Id" class="btn btn-sm btn-danger">Delete</a>
-                                    </td>
+                                    <th>Actions</th>
                                 }
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.AttendanceRecords)
+                            {
+                                <tr>
+                                    <td>@record.Date.ToString("MMM dd, yyyy")</td>
+                                    <td>@record.DayOfWeek</td>
+                                    <td>@record.ClockInTime</td>
+                                    <td>@record.ClockOutTime</td>
+                                    <td>
+                                        @if (record.WorkedHours.HasValue)
+                                        {
+                                            @record.WorkedHours.Value.ToString("F2")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (record.Status == "Complete")
+                                        {
+                                            <span class="badge bg-success">@record.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">@record.Status</span>
+                                        }
+                                    </td>
+                                    @if (Model.IsAdminView)
+                                    {
+                                        <td>
+                                            <a asp-controller="Attendance" asp-action="Edit" asp-route-id="@record.Id" class="btn btn-sm btn-primary">Edit</a>
+                                            <a asp-controller="Attendance" asp-action="Delete" asp-route-id="@record.Id" class="btn btn-sm btn-danger">Delete</a>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     }
     else if (Model.IsAdminView && Model.EmployeeId > 0)
     {
-        <!-- Message when employee is selected but no records found -->
-        <div class="alert alert-warning" role="alert">
-            <h5 class="alert-heading">No Records Found</h5>
-            <p class="mb-0">No attendance records found for <strong>@Model.EmployeeName</strong> in <strong>@Model.MonthYearDisplay</strong>.</p>
+        <div class="dashboard-card">
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <h5 class="alert-heading">No Records Found</h5>
+                    <p class="mb-0">No attendance records found for <strong>@Model.EmployeeName</strong> in <strong>@Model.MonthYearDisplay</strong>.</p>
+                </div>
+            </div>
         </div>
     }
     else if (Model.EmployeeId > 0)
     {
-        <!-- Message when employee is selected but no records found -->
-        <div class="alert alert-warning" role="alert">
-            <h5 class="alert-heading">No Records Found</h5>
-            <p class="mb-0">No attendance records found for <strong>@Model.MonthYearDisplay</strong>.</p>
+        <div class="dashboard-card">
+            <div class="card-body">
+                <div class="alert alert-warning" role="alert">
+                    <h5 class="alert-heading">No Records Found</h5>
+                    <p class="mb-0">No attendance records found for <strong>@Model.MonthYearDisplay</strong>.</p>
+                </div>
+            </div>
         </div>
     }
 </div>

@@ -26,13 +26,41 @@
 .sidebar-header {
     padding: 1.5rem 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
 }
 
-.brand-logo h3 {
+.brand-logo h2 {
     color: white;
     margin: 0;
     font-weight: 700;
-    font-size: 1.8rem;
+    font-size: 2.2rem;
+    letter-spacing: 0.5px;
+    /* Removed text-shadow and gradient effects */
+}
+
+/* Remove the old brand-logo h3 styling since we're now using h2 */
+.brand-logo h3 {
+    display: none;
+}
+
+/* Remove middle brand styling since we moved it back to top */
+.nav-item.brand-center {
+    display: none;
+}
+
+.brand-logo-center {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .brand-logo h2 {
+        font-size: 1.8rem;
+    }
+
+    .sidebar-header {
+        padding: 1.25rem 1rem;
+    }
 }
 
 .user-profile {
@@ -359,4 +387,622 @@
         flex-direction: column;
         text-align: center;
     }
-} 
+}
+
+/* Time Clock Specific Styles */
+.status-display {
+    text-align: center;
+    padding: 1rem;
+}
+
+.status-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.status-text {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.clock-btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    min-width: 150px;
+}
+
+/* Attendance Details Styles */
+.stat-summary {
+    text-align: center;
+    padding: 1rem;
+}
+
+.stat-summary h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--turquoise);
+    margin-bottom: 0.5rem;
+}
+
+.stat-summary p {
+    color: #6c757d;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Profile Styles */
+.profile-summary {
+    text-align: center;
+    padding: 1rem;
+}
+
+.profile-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Payroll Styles */
+.payroll-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+
+.breakdown-item.total {
+    background: var(--turquoise-very-light);
+    border-left: 4px solid var(--turquoise);
+}
+
+.breakdown-item.gross {
+    background: #d1f2eb;
+    border-left: 4px solid #28a745;
+}
+
+.breakdown-item.net {
+    background: var(--turquoise-very-light);
+    border-left: 4px solid var(--turquoise);
+    font-size: 1.1rem;
+}
+
+/* Form styling consistency */
+.form-control:focus {
+    border-color: var(--turquoise);
+    box-shadow: 0 0 0 0.2rem rgba(37, 150, 190, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--turquoise-dark);
+    margin-bottom: 0.5rem;
+}
+
+/* Alert styling */
+.alert-info {
+    border-color: var(--turquoise-light);
+    background-color: var(--turquoise-very-light);
+    color: var(--turquoise-dark);
+}
+
+/* Employee and Admin Specific Styles */
+.employee-info, .department-info {
+    display: flex;
+    align-items: center;
+}
+
+.employee-info i, .department-info i {
+    font-size: 1.2rem;
+}
+
+/* Holiday Calendar Styles */
+.holiday-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid var(--turquoise);
+}
+
+/* Holiday Month Header - Blue background */
+.holiday-month-header {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%) !important;
+    color: white !important;
+    border-bottom: 2px solid #0b5ed7;
+}
+
+.holiday-month-header h5 {
+    color: white !important;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.holiday-month-header i {
+    color: rgba(255,255,255,0.9);
+}
+
+.holiday-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 60px;
+}
+
+.date-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--turquoise);
+    line-height: 1;
+}
+
+.date-day {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+}
+
+.holiday-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.holiday-info h6 {
+    margin: 0;
+    color: var(--turquoise-dark);
+    font-weight: 600;
+}
+
+.holiday-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+/* Department and Employee Cards Enhancement */
+.dashboard-card .badge {
+    font-size: 0.85rem;
+}
+
+.dashboard-card .btn-group .btn {
+    border-radius: 4px;
+}
+
+.dashboard-card .btn-group .btn:not(:last-child) {
+    margin-right: 0.25rem;
+}
+
+/* Payroll specific styling */
+.payroll-stats {
+    background: linear-gradient(135deg, var(--turquoise-very-light), #f8f9fa);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Empty states */
+.dashboard-card .text-center.py-4 {
+    padding: 3rem 2rem !important;
+}
+
+.dashboard-card .text-center.py-4 i {
+    opacity: 0.5;
+}
+
+/* Table enhancements */
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+    color: var(--turquoise-dark);
+}
+
+.table-responsive {
+    border-radius: 8px;
+}
+
+/* Badge variants */
+.badge.bg-light {
+    color: var(--turquoise-dark) !important;
+    border: 1px solid #dee2e6;
+}
+
+/* CRUD Form Enhancements */
+.guidelines {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.guideline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.guideline-item i {
+    font-size: 1.2rem;
+    margin-top: 0.1rem;
+}
+
+.guideline-item h6 {
+    margin: 0 0 0.25rem 0;
+    color: var(--turquoise-dark);
+    font-weight: 600;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.employee-summary {
+    text-align: left;
+}
+
+.employee-details, .department-details {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.input-group-text {
+    background-color: var(--turquoise-very-light);
+    border-color: #dee2e6;
+    color: var(--turquoise-dark);
+    font-weight: 600;
+}
+
+/* Form validation styling */
+.text-danger {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+/* Alert styling for forms */
+.alert-warning {
+    border-color: #ffc107;
+    background-color: #fff3cd;
+}
+
+.card-header.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Form control focus states */
+.form-control:focus {
+    border-color: var(--turquoise);
+    box-shadow: 0 0 0 0.2rem rgba(37, 150, 190, 0.25);
+}
+
+.form-control[readonly] {
+    background-color: #f8f9fa;
+    opacity: 1;
+}
+
+/* Custom Button Colors for Edit and Delete Actions */
+
+/* Delete Button - Green */
+.btn-outline-danger,
+.btn-danger {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.btn-outline-danger:hover,
+.btn-danger:hover {
+    background-color: #218838 !important;
+    border-color: #218838 !important;
+    color: white !important;
+}
+
+.btn-outline-danger:focus,
+.btn-danger:focus {
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+}
+
+/* Edit Button - Turquoise to match your brand color */
+.btn-outline-primary:not(.btn-primary),
+.btn-outline-primary.btn-sm {
+    background-color: var(--turquoise) !important;
+    border-color: var(--turquoise) !important;
+    color: white !important;
+}
+
+.btn-outline-primary:not(.btn-primary):hover,
+.btn-outline-primary.btn-sm:hover {
+    background-color: var(--turquoise-dark) !important;
+    border-color: var(--turquoise-dark) !important;
+    color: white !important;
+}
+
+.btn-outline-primary:not(.btn-primary):focus,
+.btn-outline-primary.btn-sm:focus {
+    box-shadow: 0 0 0 0.2rem rgba(37, 150, 190, 0.25) !important;
+}
+
+/* Specific targeting for action buttons in tables and cards */
+.holiday-actions .btn-outline-danger,
+.btn-group .btn-outline-danger,
+table .btn-outline-danger {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.holiday-actions .btn-outline-primary,
+.btn-group .btn-outline-primary,
+table .btn-outline-primary {
+    background-color: var(--turquoise) !important;
+    border-color: var(--turquoise) !important;
+    color: white !important;
+}
+
+/* Form action buttons - keep primary buttons as turquoise */
+.form-actions .btn-primary,
+.btn.btn-primary:not(.btn-outline-primary) {
+    background-color: var(--turquoise) !important;
+    border-color: var(--turquoise) !important;
+}
+
+.form-actions .btn-primary:hover,
+.btn.btn-primary:not(.btn-outline-primary):hover {
+    background-color: var(--turquoise-dark) !important;
+    border-color: var(--turquoise-dark) !important;
+}
+
+/* Ensure icon buttons in action groups are properly styled */
+.btn-group .btn i,
+.holiday-actions .btn i,
+table .btn i {
+    color: white !important;
+}
+
+
+/* Security Settings Enhancements */
+.security-card .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+    .security-card .btn i {
+        font-size: 1rem;
+    }
+
+/* Password Change Form Enhancements */
+.form-label i {
+    width: 20px;
+    text-align: center;
+}
+
+.password-strength-indicator {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    background: #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.password-strength-weak {
+    background: linear-gradient(90deg, #dc3545 30%, #e9ecef 30%);
+}
+
+.password-strength-medium {
+    background: linear-gradient(90deg, #ffc107 60%, #e9ecef 60%);
+}
+
+.password-strength-strong {
+    background: linear-gradient(90deg, #28a745 100%, #e9ecef 100%);
+}
+
+/* Security Tips Styling */
+.security-tips {
+    background: var(--turquoise-very-light);
+    border-left: 4px solid var(--turquoise);
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 0 6px 6px 0;
+}
+
+    .security-tips h6 {
+        color: var(--turquoise-dark);
+        margin-bottom: 0.75rem;
+    }
+
+    .security-tips ul {
+        margin: 0;
+        padding-left: 1.25rem;
+    }
+
+    .security-tips li {
+        margin-bottom: 0.5rem;
+        color: #6c757d;
+    }
+
+/* Account Info Card Styling */
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-item .text-muted {
+        font-size: 0.9rem;
+    }
+
+    .detail-item .fw-bold,
+    .detail-item .badge {
+        font-size: 0.9rem;
+    }
+
+/* Enhanced Guidelines Styling */
+.guidelines {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.guideline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+}
+
+    .guideline-item:nth-child(1) {
+        border-left-color: #28a745;
+    }
+
+    .guideline-item:nth-child(2) {
+        border-left-color: #17a2b8;
+    }
+
+    .guideline-item:nth-child(3) {
+        border-left-color: #ffc107;
+    }
+
+    .guideline-item i {
+        font-size: 1.2rem;
+        margin-top: 0.1rem;
+    }
+
+    .guideline-item h6 {
+        margin: 0 0 0.25rem 0;
+        color: var(--turquoise-dark);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .guideline-item p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+/* Brand Center Styling */
+.nav-item.brand-center {
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.brand-logo-center {
+    text-align: center;
+    padding: 0.75rem 1.5rem;
+}
+
+    .brand-logo-center h2 {
+        color: white;
+        margin: 0;
+        font-weight: 700;
+        font-size: 2.2rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 0.5px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+    }
+
+        /* Add a subtle glow effect */
+        .brand-logo-center h2::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 8px;
+            z-index: -1;
+        }
+
+/* Ensure proper spacing around the brand */
+.nav-item.brand-center + .nav-item {
+    margin-top: 0.5rem;
+}
+
+.nav-item:has(+ .nav-item.brand-center) {
+    margin-bottom: 0.5rem;
+}
+
+/* Alternative simpler styling if the gradient doesn't work */
+@supports not (-webkit-background-clip: text) {
+    .brand-logo-center h2 {
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        background: none;
+        -webkit-text-fill-color: initial;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .brand-logo-center h2 {
+        font-size: 1.8rem;
+    }
+
+    .nav-item.brand-center {
+        margin: 1rem 0;
+        padding: 0.75rem 0;
+    }
+}

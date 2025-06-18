@@ -31,14 +31,11 @@ builder.Services.AddIdentity<ApplicationUser,
     .AddEntityFrameworkStores<ApplicationDbContext>()
    .AddDefaultTokenProviders();
 
-
-
-
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Authentication/Login";
+    options.LoginPath = "/Home/Index";
+    options.AccessDeniedPath = "/Home/Index";
 });
-
 
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 builder.Services.AddScoped(typeof(IEntitiesRepository<>), typeof(EntitiesRepository<>));
@@ -95,7 +92,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 //app.UseEndpoints(endpoints =>
 //{

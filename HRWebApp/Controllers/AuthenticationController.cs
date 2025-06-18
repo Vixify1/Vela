@@ -30,13 +30,6 @@ namespace HRWebApp.Controllers
         }
 
         [HttpGet]
-
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult Register()
         {

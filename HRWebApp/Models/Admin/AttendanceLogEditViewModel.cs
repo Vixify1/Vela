@@ -29,6 +29,10 @@ namespace HRWebApp.Models.Admin
         public string? EmployeeName { get; set; }
         public List<SelectListItem>? Employees { get; set; }
 
+        // Filter parameters for maintaining state
+        public int? SelectedMonth { get; set; }
+        public int? SelectedYear { get; set; }
+
         // Calculated properties
         public DateTime ClockInDateTime => Date.Add(ClockInTime);
         public DateTime? ClockOutDateTime => ClockOutTime.HasValue ? Date.Add(ClockOutTime.Value) : null;

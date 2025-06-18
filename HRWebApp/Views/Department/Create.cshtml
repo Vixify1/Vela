@@ -2,26 +2,78 @@
 
 @{
     ViewData["Title"] = "Create Department";
+    Layout = "_DashboardLayout";
 }
 
-<div class="container mt-4">
-    <h2>Create Department</h2>
-    <div class="row">
-        <div class="col-md-6">
-            <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="welcome-header">
+        <h1>Create New Department</h1>
+        <p class="text-muted">Add a new department to organize your workforce</p>
+    </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Department Information</h5>
                 </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        <div class="form-group mb-4">
+                            <label asp-for="Name" class="form-label">Department Name</label>
+                            <input asp-for="Name" class="form-control form-control-lg" placeholder="Enter department name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <small class="form-text text-muted">Choose a clear, descriptive name for the department</small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Create Department
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <div class="col-lg-6">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5>Department Guidelines</h5>
+                </div>
+                <div class="card-body">
+                    <div class="guidelines">
+                        <div class="guideline-item">
+                            <i class="fas fa-lightbulb text-warning"></i>
+                            <div>
+                                <h6>Naming Convention</h6>
+                                <p class="small text-muted">Use clear, professional names like "Human Resources", "Engineering", or "Sales".</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="fas fa-users text-primary"></i>
+                            <div>
+                                <h6>Employee Assignment</h6>
+                                <p class="small text-muted">After creating the department, you can assign employees to it from the Employee management section.</p>
+                            </div>
+                        </div>
+                        <div class="guideline-item">
+                            <i class="fas fa-info-circle text-info"></i>
+                            <div>
+                                <h6>Department Benefits</h6>
+                                <p class="small text-muted">Departments help organize payroll, reporting, and employee management.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

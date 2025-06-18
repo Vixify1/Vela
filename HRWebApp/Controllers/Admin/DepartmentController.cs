@@ -10,10 +10,12 @@ namespace HRWebApp.Controllers.Admin
     public class DepartmentController : Controller
     {
         private readonly IEntitiesRepository<Department> _departmentRepository;
+        private readonly IEntitiesRepository<Employee> _employeeRepository;
 
-        public DepartmentController(IEntitiesRepository<Department> departmentRepository)
+        public DepartmentController(IEntitiesRepository<Department> departmentRepository, IEntitiesRepository<Employee> employeeRepository)
         {
             _departmentRepository = departmentRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public IActionResult Index()
@@ -22,7 +24,8 @@ namespace HRWebApp.Controllers.Admin
                 .Select(d => new DepartmentViewModel
                 {
                     Id = d.Id,
-                    Name = d.Name
+                    Name = d.Name,
+                    EmployeeCount = _employeeRepository.GetAll().Count(e => e.DepartmentId == d.Id)
                 }).ToList();
 
             return View(departments);
@@ -62,7 +65,8 @@ namespace HRWebApp.Controllers.Admin
             var model = new DepartmentViewModel
             {
                 Id = department.Id,
-                Name = department.Name
+                Name = department.Name,
+                EmployeeCount = _employeeRepository.GetAll().Count(e => e.DepartmentId == department.Id)
             };
 
             return View(model);
@@ -100,7 +104,8 @@ namespace HRWebApp.Controllers.Admin
             var model = new DepartmentViewModel
             {
                 Id = department.Id,
-                Name = department.Name
+                Name = department.Name,
+                EmployeeCount = _employeeRepository.GetAll().Count(e => e.DepartmentId == department.Id)
             };
 
             return View(model);

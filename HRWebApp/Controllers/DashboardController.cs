@@ -37,17 +37,62 @@ namespace HRWebApp.Controllers
             ViewBag.UserName = $"{user.FirstName} {user.LastName}";
             ViewBag.UserEmail = user.Email;
             
-            // Get some basic stats for the dashboard
-            var totalEmployees = _employeeRepository.GetAll().Count();
-            ViewBag.TotalEmployees = totalEmployees;
-            
-            // For now, let's consider all employees as active
-            // You can add more complex logic later if needed (e.g., based on employment status)
-            ViewBag.ActiveEmployees = totalEmployees;
-            
             var today = DateTime.Today;
-            ViewBag.TodayAttendance = _attendanceRepository.GetAll()
-                .Where(a => a.ClockIn != default(DateTime) && a.ClockIn.Date == today).Count();
+            var currentMonth = DateTime.Now.Month;
+            var currentYear = DateTime.Now.Year;
+            
+            if (User.IsInRole("Admin"))
+            {
+                // Admin stats - company-wide data
+                var totalEmployees = _employeeRepository.GetAll().Count();
+                ViewBag.TotalEmployees = totalEmployees;
+                ViewBag.ActiveEmployees = totalEmployees;
+                ViewBag.TodayAttendance = _attendanceRepository.GetAll()
+                    .Where(a => a.ClockIn != default(DateTime) && a.ClockIn.Date == today).Count();
+            }
+            else
+            {
+                // Employee stats - personal data only
+                var currentEmployee = _employeeRepository.GetAll()
+                    .FirstOrDefault(e => e.UserId == user.Id);
+                
+                if (currentEmployee != null)
+                {
+                    // Days worked this month
+                    ViewBag.DaysWorkedThisMonth = _attendanceRepository.GetAll()
+                        .Where(a => a.EmployeeId == currentEmployee.Id && 
+                               a.ClockIn.Month == currentMonth && 
+                               a.ClockIn.Year == currentYear)
+                        .Count();
+                    
+                    // Hours worked this week - Fix the LINQ translation issue
+                    var startOfWeek = today.AddDays(-(int)today.DayOfWeek);
+                    var weeklyAttendance = _attendanceRepository.GetAll()
+                        .Where(a => a.EmployeeId == currentEmployee.Id && 
+                               a.ClockIn.Date >= startOfWeek && 
+                               a.ClockIn.Date <= today &&
+                               a.ClockOut.HasValue)
+                        .ToList(); // Bring data to client side first
+                    
+                    var hoursThisWeek = weeklyAttendance
+                        .Sum(a => (a.ClockOut.Value - a.ClockIn).TotalHours);
+                    
+                    ViewBag.HoursThisWeek = Math.Round(hoursThisWeek, 1);
+                    
+                    // Check if clocked in today
+                    ViewBag.ClockedInToday = _attendanceRepository.GetAll()
+                        .Any(a => a.EmployeeId == currentEmployee.Id && a.ClockIn.Date == today);
+                }
+                else
+                {
+                    ViewBag.DaysWorkedThisMonth = 0;
+                    ViewBag.HoursThisWeek = 0.0;
+                    ViewBag.ClockedInToday = false;
+                }
+                
+                ViewBag.TodayAttendance = _attendanceRepository.GetAll()
+                    .Where(a => a.ClockIn != default(DateTime) && a.ClockIn.Date == today).Count();
+            }
 
             return View();
         }
