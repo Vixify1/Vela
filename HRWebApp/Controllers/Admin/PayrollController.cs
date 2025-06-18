@@ -145,6 +145,10 @@ namespace HRWebApp.Controllers.Admin
                 HolidayPay = p.HolidayPay,
                 SundayPay = p.SundayPay,
                 GrossSalary = p.GrossSalary,
+                SocialSecurityDeduction = p.SocialSecurityDeduction,
+                HealthInsuranceDeduction = p.HealthInsuranceDeduction,
+                IncomeTaxDeduction = p.IncomeTaxDeduction,
+                TotalDeductions = p.TotalDeductions,
                 NetSalary = p.NetSalary,
                 IsCalculated = p.IsCalculated
             }).OrderBy(p => p.EmployeeName).ToList();
@@ -216,6 +220,10 @@ namespace HRWebApp.Controllers.Admin
                 HolidayPay = payrollRecord.HolidayPay,
                 SundayPay = payrollRecord.SundayPay,
                 GrossSalary = payrollRecord.GrossSalary,
+                SocialSecurityDeduction = payrollRecord.SocialSecurityDeduction,
+                HealthInsuranceDeduction = payrollRecord.HealthInsuranceDeduction,
+                IncomeTaxDeduction = payrollRecord.IncomeTaxDeduction,
+                TotalDeductions = payrollRecord.TotalDeductions,
                 NetSalary = payrollRecord.NetSalary
             };
 

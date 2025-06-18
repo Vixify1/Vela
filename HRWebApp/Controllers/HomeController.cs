@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using HRWebApp.Models;
+using HRWebApp.Models.Authentication;
 
 namespace HRWebApp.Controllers;
 
@@ -15,7 +16,14 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        // If user is authenticated, redirect to dashboard
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+        var model = new LoginViewModel();
+        return View(model);
     }
 
     public IActionResult Privacy()

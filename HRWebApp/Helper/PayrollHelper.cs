@@ -67,12 +67,23 @@ namespace HRWebApp.Helper
                 }
             }
 
-            // Calculate pay
-            var standardPay = standardHours * employee.HourlyRate;
-            var holidayPay = holidayHours * employee.HourlyRate * 1.5m;
-            var sundayPay = sundayHours * employee.HourlyRate * 1.75m;
-            var grossSalary = standardPay + holidayPay + sundayPay;
-            var netSalary = grossSalary; // No deductions for now
+            // Calculate NET pay first (employee.HourlyRate is NET)
+            var netStandardPay = standardHours * employee.HourlyRate;
+            var netHolidayPay = holidayHours * employee.HourlyRate * 1.5m;
+            var netSundayPay = sundayHours * employee.HourlyRate * 1.75m;
+            var totalNetSalary = netStandardPay + netHolidayPay + netSundayPay;
+
+            // Calculate the GROSS salary needed to achieve this NET salary
+            var grossSalary = TaxHelper.CalculateGrossFromNet(totalNetSalary);
+            
+            // Calculate individual gross pay components proportionally
+            var grossRatio = totalNetSalary > 0 ? grossSalary / totalNetSalary : 0;
+            var grossStandardPay = Math.Round(netStandardPay * grossRatio, 2);
+            var grossHolidayPay = Math.Round(netHolidayPay * grossRatio, 2);
+            var grossSundayPay = Math.Round(netSundayPay * grossRatio, 2);
+
+            // Calculate deductions from the gross salary
+            var deductions = TaxHelper.CalculateAllDeductions(grossSalary);
 
             return new PayrollCalculation
             {
@@ -80,16 +91,20 @@ namespace HRWebApp.Helper
                 EmployeeName = $"{employee.firstName} {employee.lastName}",
                 Year = year,
                 Month = month,
-                HourlyRate = employee.HourlyRate,
+                HourlyRate = employee.HourlyRate, // This remains NET
                 StandardHours = Math.Round(standardHours, 2),
                 HolidayHours = Math.Round(holidayHours, 2),
                 SundayHours = Math.Round(sundayHours, 2),
                 TotalHours = Math.Round(standardHours + holidayHours + sundayHours, 2),
-                StandardPay = Math.Round(standardPay, 2),
-                HolidayPay = Math.Round(holidayPay, 2),
-                SundayPay = Math.Round(sundayPay, 2),
+                StandardPay = grossStandardPay,
+                HolidayPay = grossHolidayPay,
+                SundayPay = grossSundayPay,
                 GrossSalary = Math.Round(grossSalary, 2),
-                NetSalary = Math.Round(netSalary, 2)
+                SocialSecurityDeduction = deductions.socialSecurity,
+                HealthInsuranceDeduction = deductions.healthInsurance,
+                IncomeTaxDeduction = deductions.incomeTax,
+                TotalDeductions = deductions.total,
+                NetSalary = Math.Round(totalNetSalary, 2)
             };
         }
 
@@ -113,6 +128,10 @@ namespace HRWebApp.Helper
                 existingPayroll.HolidayPay = calculation.HolidayPay;
                 existingPayroll.SundayPay = calculation.SundayPay;
                 existingPayroll.GrossSalary = calculation.GrossSalary;
+                existingPayroll.SocialSecurityDeduction = calculation.SocialSecurityDeduction;
+                existingPayroll.HealthInsuranceDeduction = calculation.HealthInsuranceDeduction;
+                existingPayroll.IncomeTaxDeduction = calculation.IncomeTaxDeduction;
+                existingPayroll.TotalDeductions = calculation.TotalDeductions;
                 existingPayroll.NetSalary = calculation.NetSalary;
                 existingPayroll.UpdatedAt = DateTime.Now;
                 existingPayroll.IsCalculated = true;
@@ -136,6 +155,10 @@ namespace HRWebApp.Helper
                     HolidayPay = calculation.HolidayPay,
                     SundayPay = calculation.SundayPay,
                     GrossSalary = calculation.GrossSalary,
+                    SocialSecurityDeduction = calculation.SocialSecurityDeduction,
+                    HealthInsuranceDeduction = calculation.HealthInsuranceDeduction,
+                    IncomeTaxDeduction = calculation.IncomeTaxDeduction,
+                    TotalDeductions = calculation.TotalDeductions,
                     NetSalary = calculation.NetSalary,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,

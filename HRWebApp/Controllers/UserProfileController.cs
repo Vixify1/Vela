@@ -245,6 +245,10 @@ namespace HRWebApp.Controllers
                 HolidayPay = payrollRecord.HolidayPay,
                 SundayPay = payrollRecord.SundayPay,
                 GrossSalary = payrollRecord.GrossSalary,
+                SocialSecurityDeduction = payrollRecord.SocialSecurityDeduction,
+                HealthInsuranceDeduction = payrollRecord.HealthInsuranceDeduction,
+                IncomeTaxDeduction = payrollRecord.IncomeTaxDeduction,
+                TotalDeductions = payrollRecord.TotalDeductions,
                 NetSalary = payrollRecord.NetSalary
             };
 

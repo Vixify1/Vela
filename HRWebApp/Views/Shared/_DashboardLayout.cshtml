@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Vela Dashboard</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HRWebApp.styles.css" asp-append-version="true" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <h3>Vela</h3>
+                </div>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-info">
+                    <h6>@ViewBag.UserName</h6>
+                    <small>@(User.IsInRole("Admin") ? "Administrator" : "Employee")</small>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a asp-controller="Dashboard" asp-action="Index" class="nav-link active">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Dashboard
+                        </a>
+                    </li>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                            <li class="nav-item">
+                                <a asp-controller="Employee" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-users"></i>
+                                    Employees
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Department" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-building"></i>
+                                    Departments
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Payroll" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Payroll
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-controller="Holiday" asp-action="Calendar" class="nav-link">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Holidays
+                                </a>
+                            </li>
+                    }
+
+                    <li class="nav-item">
+                        <a asp-controller="TimeClock" asp-action="Index" class="nav-link">
+                            <i class="fas fa-clock"></i>
+                            Time Clock
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="TimeClock" asp-action="MonthlyDetails" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="UserProfile" asp-action="Index" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            Profile
+                        </a>
+                    </li>
+
+                    @if (!User.IsInRole("Admin"))
+                    {
+                            <li class="nav-item">
+                                <a asp-controller="UserProfile" asp-action="Payroll" class="nav-link">
+                                    <i class="fas fa-receipt"></i>
+                                    My Payroll
+                                </a>
+                            </li>
+                    }
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <form asp-controller="Authentication" asp-action="Logout" method="post">
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

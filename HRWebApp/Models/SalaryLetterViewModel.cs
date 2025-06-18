@@ -45,11 +45,23 @@ namespace HRWebApp.Models
         [Display(Name = "Net Salary")]
         public decimal NetSalary { get; set; }
 
+        [Display(Name = "Social Security Deduction")]
+        public decimal SocialSecurityDeduction { get; set; }
+
+        [Display(Name = "Health Insurance Deduction")]
+        public decimal HealthInsuranceDeduction { get; set; }
+
+        [Display(Name = "Income Tax Deduction")]
+        public decimal IncomeTaxDeduction { get; set; }
+
+        [Display(Name = "Total Deductions")]
+        public decimal TotalDeductions { get; set; }
+
         public DateTime GeneratedDate { get; set; } = DateTime.Now;
 
         // Display helpers
         public string MonthYearDisplay => new DateTime(Year, Month, 1).ToString("MMMM yyyy");
-        public string CompanyName => "HR Web Application Company";
+        public string CompanyName => "Vela Company";
         public string CompanyAddress => "123 Business Street, City, State 12345";
     }
 }

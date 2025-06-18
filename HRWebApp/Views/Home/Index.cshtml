@@ -1,51 +1,118 @@
-﻿@{
+﻿@model HRWebApp.Models.Authentication.LoginViewModel
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "_LandingLayout";
 }
 
-<div class="landing-page">
-    <div class="hero-section text-center">
-        <h1 class="display-3 text-white mb-4">Welcome to HR Web App</h1>
-        <p class="lead text-white mb-5">Streamline your HR operations with our comprehensive management system</p>
+<div class="vela-landing">
+    <div class="container-fluid">
+        <div class="row min-vh-100 align-items-center">
+            <!-- Left Content Section -->
+            <div class="col-lg-7 hero-content">
+                <div class="px-5">
+                    <div class="mb-4">
+                        <span class="badge bg-light text-dark px-3 py-2 rounded-pill">
+                            <i class="star-icon">⭐</i> Rated 4.8/5 on Reviews
+                        </span>
+                    </div>
 
-        @if (!User.Identity.IsAuthenticated)
-        {
-            <div class="cta-buttons">
-                <a href="@Url.Action("Login", "Authentication")" class="btn btn-light btn-lg">Login</a>
-            </div>
-        }
-        else
-        {
-            <div class="feature-cards mt-5">
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <h3 class="card-title">Time Clock</h3>
-                                <p class="card-text">Track your work hours easily with our digital time clock system.</p>
-                                <a href="@Url.Action("Index", "TimeClock")" class="btn btn-primary">Clock In/Out</a>
-                            </div>
-                        </div>
+                    <h1 class="display-2 fw-bold text-white mb-4">
+                        <span class="text-turquoise">Onboard, Manage, & Pay</span><br />
+                        Your <span class="text-highlight">Global</span><br />
+                        <span class="text-highlight">Employees</span>
+                    </h1>
+
+                    <p class="lead text-white mb-4 fs-5">
+                        The all-in-one platform for global HR, payroll, and compliance — built
+                        for teams of any size, from startups to industry leaders.
+                    </p>
+
+                    <div class="pricing-info mb-4">
+                        <p class="text-white fs-6 mb-0">
+                            <strong>$39/month per Employee</strong> + 1-Month Free Trial
+                        </p>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <h3 class="card-title">Profile</h3>
-                                <p class="card-text">View and manage your employee profile and personal information.</p>
-                                <a href="@Url.Action("Index", "UserProfile")" class="btn btn-primary">View Profile</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <h3 class="card-title">Attendance</h3>
-                                <p class="card-text">Check your attendance history and work hour records.</p>
-                                <a href="@Url.Action("MonthlyDetails", "TimeClock")" class="btn btn-primary">View Records</a>
-                            </div>
+
+                    <div class="trust-badges">
+                        <p class="text-white-50 mb-2">Trusted By <strong class="text-white">500+</strong> Companies</p>
+                        <div class="company-logos d-flex align-items-center gap-4">
+                            <span class="text-white-50">🏢 Global Leaders</span>
+                            <span class="text-white-50">🚀 Fast-Growing Startups</span>
+                            <span class="text-white-50">🏭 Enterprise Solutions</span>
                         </div>
                     </div>
                 </div>
             </div>
-        }
+
+            <!-- Right Login Section -->
+            <div class="col-lg-5 login-section">
+                <div class="px-4">
+                    <div class="login-card card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <h3 class="card-title text-center mb-4 text-dark fw-bold">Welcome to Vela</h3>
+
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <form asp-controller="Authentication" asp-action="Login" method="post">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                                    <div class="form-group mb-3">
+                                        <label asp-for="Email" class="form-label text-muted">Company Email Address*</label>
+                                        <input asp-for="Email" class="form-control form-control-lg" placeholder="Enter your email" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label asp-for="Password" class="form-label text-muted">Password*</label>
+                                        <input asp-for="Password" class="form-control form-control-lg" type="password" placeholder="Enter your password" />
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="form-group mb-4">
+                                        <div class="form-check">
+                                            <input asp-for="RememberMe" class="form-check-input" />
+                                            <label asp-for="RememberMe" class="form-check-label text-muted">Remember me</label>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                        Sign In to Vela
+                                    </button>
+                                </form>
+
+                                <div class="text-center">
+                                    <p class="text-muted small mb-0">
+                                        We're committed to your privacy. Vela uses the information you provide to contact you about our relevant products and services.
+                                    </p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    <h4 class="text-success mb-3">Welcome back!</h4>
+                                    <p class="text-muted mb-4">You're successfully logged in to Vela.</p>
+                                    <div class="d-grid gap-2">
+                                        <a href="@Url.Action("Index", "Dashboard")" class="btn btn-primary btn-lg">
+                                            Go to Dashboard
+                                        </a>
+                                        <form asp-controller="Authentication" asp-action="Logout" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-secondary btn-lg w-100">
+                                                Logout
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -22,13 +22,20 @@ namespace HRWebApp.Entities
         public decimal SundayHours { get; set; }
         public decimal TotalHours { get; set; }
 
-        // Pay calculations
+        // Pay calculations - HourlyRate remains NET
         public decimal HourlyRate { get; set; }
         public decimal StandardPay { get; set; }
         public decimal HolidayPay { get; set; }  // 1.5x rate
         public decimal SundayPay { get; set; }   // 1.75x rate
         public decimal GrossSalary { get; set; }
-        public decimal NetSalary { get; set; }   // You can add deductions later
+        
+        // Albanian tax deductions
+        public decimal SocialSecurityDeduction { get; set; } // 9.5%
+        public decimal HealthInsuranceDeduction { get; set; } // 1.7%
+        public decimal IncomeTaxDeduction { get; set; }
+        public decimal TotalDeductions { get; set; }
+        
+        public decimal NetSalary { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

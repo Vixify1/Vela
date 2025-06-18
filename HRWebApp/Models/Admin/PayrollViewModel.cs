@@ -17,7 +17,7 @@ namespace HRWebApp.Models.Admin
         [Display(Name = "Year")]
         public int Year { get; set; }
         
-        [Display(Name = "Hourly Rate")]
+        [Display(Name = "Hourly Rate (Net)")]
         public decimal HourlyRate { get; set; }
         
         [Display(Name = "Standard Hours")]
@@ -43,6 +43,19 @@ namespace HRWebApp.Models.Admin
         
         [Display(Name = "Gross Salary")]
         public decimal GrossSalary { get; set; }
+        
+        // Albanian tax deductions
+        [Display(Name = "Social Security (9.5%)")]
+        public decimal SocialSecurityDeduction { get; set; }
+        
+        [Display(Name = "Health Insurance (1.7%)")]
+        public decimal HealthInsuranceDeduction { get; set; }
+        
+        [Display(Name = "Income Tax")]
+        public decimal IncomeTaxDeduction { get; set; }
+        
+        [Display(Name = "Total Deductions")]
+        public decimal TotalDeductions { get; set; }
         
         [Display(Name = "Net Salary")]
         public decimal NetSalary { get; set; }
