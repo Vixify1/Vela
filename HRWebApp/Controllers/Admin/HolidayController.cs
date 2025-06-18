@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using HRWebApp.Abstract;
 using HRWebApp.Entities;
 using HRWebApp.Models.Admin;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HRWebApp.Controllers.Admin
 {
@@ -23,9 +24,11 @@ namespace HRWebApp.Controllers.Admin
         }
 
         // List view for detailed management
-        public IActionResult List()
+        public IActionResult List(int? year = null)
         {
+            var selectedYear = year ?? DateTime.Now.Year;
             var holidays = _holidayRepository.GetAll()
+                .Where(h => h.Date.Year == selectedYear)
                 .OrderBy(h => h.Date)
                 .Select(h => new HolidayViewModel
                 {
@@ -34,6 +37,8 @@ namespace HRWebApp.Controllers.Admin
                     Description = h.Description
                 }).ToList();
 
+            ViewBag.SelectedYear = selectedYear;
+            ViewBag.Years = GetYearSelectList();
             return View(holidays);
         }
 
@@ -69,7 +74,7 @@ namespace HRWebApp.Controllers.Admin
                 };
 
                 _holidayRepository.Add(holiday);
-                return RedirectToAction("Calendar");
+                return RedirectToAction("Calendar", new { year = model.Date.Year });
             }
 
             return View(model);
@@ -119,7 +124,7 @@ namespace HRWebApp.Controllers.Admin
                 holiday.Description = model.Description;
                 _holidayRepository.Update(holiday);
 
-                return RedirectToAction("Calendar");
+                return RedirectToAction("Calendar", new { year = model.Date.Year });
             }
 
             return View(model);
@@ -148,20 +153,22 @@ namespace HRWebApp.Controllers.Admin
         public IActionResult DeleteConfirmed(int id)
         {
             var holiday = _holidayRepository.Get(id);
+            var year = holiday?.Date.Year ?? DateTime.Now.Year;
+            
             if (holiday != null)
             {
                 _holidayRepository.Remove(holiday);
             }
 
-            return RedirectToAction("Calendar");
+            return RedirectToAction("Calendar", new { year = year });
         }
 
-        // Calendar view - now the main view
-        public IActionResult Calendar()
+        // Calendar view - now supports year selection
+        public IActionResult Calendar(int? year = null)
         {
-            var currentYear = DateTime.Now.Year;
+            var selectedYear = year ?? DateTime.Now.Year;
             var holidays = _holidayRepository.GetAll()
-                .Where(h => h.Date.Year == currentYear)
+                .Where(h => h.Date.Year == selectedYear)
                 .OrderBy(h => h.Date)
                 .Select(h => new HolidayViewModel
                 {
@@ -170,8 +177,27 @@ namespace HRWebApp.Controllers.Admin
                     Description = h.Description
                 }).ToList();
 
-            ViewBag.CurrentYear = currentYear;
+            ViewBag.SelectedYear = selectedYear;
+            ViewBag.Years = GetYearSelectList();
             return View(holidays);
+        }
+
+        private List<SelectListItem> GetYearSelectList()
+        {
+            var years = new List<SelectListItem>();
+            var currentYear = DateTime.Now.Year;
+            
+            // Add years from 2024 to current year + 2
+            for (int year = 2024; year <= currentYear + 2; year++)
+            {
+                years.Add(new SelectListItem
+                {
+                    Value = year.ToString(),
+                    Text = year.ToString()
+                });
+            }
+            
+            return years;
         }
     }
 }

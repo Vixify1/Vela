@@ -8,8 +8,45 @@
 <div class="dashboard-content">
     <!-- Page Header -->
     <div class="welcome-header">
-        <h1>Holiday List</h1>
+        <h1>Holiday List @ViewBag.SelectedYear</h1>
         <p class="text-muted">View and manage all company holidays</p>
+    </div>
+
+    <!-- Year Selection -->
+    <div class="dashboard-card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5>Holidays for @ViewBag.SelectedYear</h5>
+                    <p class="text-muted mb-0">Select a different year to view holidays from other periods</p>
+                </div>
+                <div class="col-md-6">
+                    <form method="get" asp-action="List" class="d-flex align-items-center justify-content-end">
+                        <label for="year" class="form-label me-2 mb-0">
+                            <strong>Select Year:</strong>
+                        </label>
+                        <select name="year" id="year" class="form-select me-2" style="width: auto;" onchange="this.form.submit()">
+                            @foreach (var yearOption in ViewBag.Years)
+                            {
+                                if (yearOption.Value == ViewBag.SelectedYear.ToString())
+                                {
+                                    <option value="@yearOption.Value" selected>@yearOption.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@yearOption.Value">@yearOption.Text</option>
+                                }
+                            }
+                        </select>
+                        <noscript>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </noscript>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Stats Cards -->
@@ -21,7 +58,7 @@
                 </div>
                 <div class="stat-content">
                     <h3>@Model.Count</h3>
-                    <p>Total Holidays</p>
+                    <p>Total Holidays (@ViewBag.SelectedYear)</p>
                 </div>
             </div>
         </div>
@@ -42,10 +79,25 @@
                     <i class="fas fa-calendar-check"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>@Model.Count(h => h.Date.Year == DateTime.Now.Year)</h3>
+                    <h3>@Model.Count(h => h.Date.Year == ViewBag.SelectedYear)</h3>
                     <p>This Year</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Quick Year Navigation -->
+    <div class="mb-4">
+        <div class="btn-group" role="group" aria-label="Year Navigation">
+            <a asp-action="List" asp-route-year="2024" class="btn @(ViewBag.SelectedYear == 2024 ? "btn-primary" : "btn-outline-primary")">
+                <i class="fas fa-calendar"></i> 2024
+            </a>
+            <a asp-action="List" asp-route-year="2025" class="btn @(ViewBag.SelectedYear == 2025 ? "btn-primary" : "btn-outline-primary")">
+                <i class="fas fa-calendar"></i> 2025
+            </a>
+            <a asp-action="List" asp-route-year="2026" class="btn @(ViewBag.SelectedYear == 2026 ? "btn-primary" : "btn-outline-primary")">
+                <i class="fas fa-calendar"></i> 2026
+            </a>
         </div>
     </div>
 
@@ -53,11 +105,11 @@
     <div class="dashboard-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
-                <h5>All Holidays</h5>
-                <small class="text-muted">Complete list of company holidays</small>
+                <h5>All Holidays (@ViewBag.SelectedYear)</h5>
+                <small class="text-muted">Complete list of company holidays for the selected year</small>
             </div>
             <div class="btn-group" role="group">
-                <a asp-action="Calendar" class="btn btn-outline-success">
+                <a asp-action="Calendar" asp-route-year="@ViewBag.SelectedYear" class="btn btn-outline-success">
                     <i class="fas fa-calendar"></i> Calendar View
                 </a>
                 <a asp-action="Create" class="btn btn-primary">
@@ -138,10 +190,10 @@
                 <div class="mb-4">
                     <i class="fas fa-calendar-times fa-3x text-muted"></i>
                 </div>
-                <h4>No Holidays Configured</h4>
-                <p class="text-muted mb-4">Start by adding your first company holiday to the system.</p>
+                <h4>No Holidays for @ViewBag.SelectedYear</h4>
+                <p class="text-muted mb-4">No holidays have been configured for this year yet.</p>
                 <a asp-action="Create" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Add First Holiday
+                    <i class="fas fa-plus"></i> Add Holiday for @ViewBag.SelectedYear
                 </a>
             </div>
         }

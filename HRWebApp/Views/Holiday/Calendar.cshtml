@@ -8,16 +8,16 @@
 <div class="dashboard-content">
     <!-- Page Header -->
     <div class="welcome-header">
-        <h1>Holiday Calendar @ViewBag.CurrentYear</h1>
+        <h1>Holiday Calendar @ViewBag.SelectedYear</h1>
         <p class="text-muted">Manage company holidays and time off</p>
     </div>
 
-    <!-- Action Buttons -->
+    <!-- Year Selection and Action Buttons -->
     <div class="dashboard-card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5>Holiday Management</h5>
             <div class="btn-group">
-                <a asp-action="List" class="btn btn-outline-primary">
+                <a asp-action="List" asp-route-year="@ViewBag.SelectedYear" class="btn btn-outline-primary">
                     <i class="fas fa-list"></i> List View
                 </a>
                 <a asp-action="Create" class="btn btn-primary">
@@ -26,9 +26,38 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="alert alert-info" role="alert">
-                <i class="fas fa-calendar-alt me-2"></i>
-                <strong>Holiday Calendar Overview</strong> - View all holidays organized by month. Use the List View button above for detailed management options.
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="alert alert-info mb-0" role="alert">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        <strong>Holiday Calendar Overview</strong> - View all holidays organized by month for the selected year.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <form method="get" asp-action="Calendar" class="d-flex align-items-center justify-content-end">
+                        <label for="year" class="form-label me-2 mb-0">
+                            <strong>Select Year:</strong>
+                        </label>
+                        <select name="year" id="year" class="form-select me-2" style="width: auto;" onchange="this.form.submit()">
+                            @foreach (var yearOption in ViewBag.Years)
+                            {
+                                if (yearOption.Value == ViewBag.SelectedYear.ToString())
+                                {
+                                    <option value="@yearOption.Value" selected>@yearOption.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@yearOption.Value">@yearOption.Text</option>
+                                }
+                            }
+                        </select>
+                        <noscript>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </noscript>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -42,7 +71,7 @@
                 </div>
                 <div class="stat-content">
                     <h3>@Model.Count</h3>
-                    <p>Total Holidays</p>
+                    <p>Total Holidays (@ViewBag.SelectedYear)</p>
                 </div>
             </div>
         </div>
@@ -52,7 +81,7 @@
                     <i class="fas fa-calendar-week"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>@Model.Count(h => h.Date >= DateTime.Today)</h3>
+                    <h3>@Model.Count(h => h.Date >= DateTime.Today && h.Date.Year == ViewBag.SelectedYear)</h3>
                     <p>Upcoming Holidays</p>
                 </div>
             </div>
@@ -63,10 +92,25 @@
                     <i class="fas fa-calendar-day"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>@Model.Where(h => h.Date.Month == DateTime.Now.Month).Count()</h3>
-                    <p>This Month</p>
+                    <h3>@Model.Where(h => h.Date.Month == DateTime.Now.Month && h.Date.Year == ViewBag.SelectedYear).Count()</h3>
+                    <p>This Month (@ViewBag.SelectedYear)</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Quick Year Navigation -->
+    <div class="mb-4">
+        <div class="btn-group" role="group" aria-label="Year Navigation">
+            <a asp-action="Calendar" asp-route-year="2024" class="btn @(ViewBag.SelectedYear == 2024 ? "btn-primary" : "btn-outline-primary")">
+                <i class="fas fa-calendar"></i> 2024
+            </a>
+            <a asp-action="Calendar" asp-route-year="2025" class="btn @(ViewBag.SelectedYear == 2025 ? "btn-primary" : "btn-outline-primary")">
+                <i class="fas fa-calendar"></i> 2025
+            </a>
+            <a asp-action="Calendar" asp-route-year="2026" class="btn @(ViewBag.SelectedYear == 2026 ? "btn-primary" : "btn-outline-primary")">
+                <i class="fas fa-calendar"></i> 2026
+            </a>
         </div>
     </div>
 
@@ -74,14 +118,14 @@
     <div class="row">
         @for (int month = 1; month <= 12; month++)
         {
-            var monthName = new DateTime(ViewBag.CurrentYear, month, 1).ToString("MMMM");
+            var monthName = new DateTime(ViewBag.SelectedYear, month, 1).ToString("MMMM");
             var monthHolidays = Model.Where(h => h.Date.Month == month).ToList();
 
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="dashboard-card h-100">
                     <div class="card-header holiday-month-header">
                         <h5 class="mb-0">
-                            <i class="fas fa-calendar me-2"></i>@monthName
+                            <i class="fas fa-calendar me-2"></i>@monthName @ViewBag.SelectedYear
                         </h5>
                     </div>
                     <div class="card-body">

@@ -1006,3 +1006,88 @@ table .btn i {
         padding: 0.75rem 0;
     }
 }
+
+/* ... existing code ... */
+
+/* Developer Attribution Styles */
+.developer-attribution {
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.attribution-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+    .attribution-text i {
+        color: var(--turquoise);
+        font-size: 0.9rem;
+    }
+
+    .attribution-text strong {
+        color: white;
+        font-weight: 600;
+    }
+
+.project-note {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;
+    font-style: italic;
+}
+
+/* Landing Footer Styles */
+.landing-footer {
+    background: linear-gradient(135deg, var(--turquoise-dark), var(--turquoise));
+    color: white;
+    padding: 2rem 0;
+    margin-top: auto;
+}
+
+.footer-attribution {
+    padding: 1rem 0;
+}
+
+    .footer-attribution p {
+        margin: 0.5rem 0;
+    }
+
+.developer-credit {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+    .developer-credit strong {
+        color: white;
+        font-weight: 600;
+    }
+
+/* Ensure landing body uses flexbox for footer positioning */
+.landing-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+    .landing-body main {
+        flex: 1;
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .attribution-text {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .developer-attribution {
+        padding: 0.75rem;
+    }
+}
