@@ -14,8 +14,8 @@ namespace HRWebApp.Controllers
 {
     public class AuthenticationController : Controller
     {
-        // ⚠️ TOGGLE THIS TO ENABLE/DISABLE ADMIN CREATION
-        private const bool ENABLE_ADMIN_CREATION = false; // Change to false to disable
+        //  TOGGLE THIS TO ENABLE/DISABLE ADMIN CREATION
+        private const bool ENABLE_ADMIN_CREATION = false;
 
         // Make this accessible to views
         public static bool IsAdminCreationEnabled => ENABLE_ADMIN_CREATION;
@@ -34,8 +34,6 @@ namespace HRWebApp.Controllers
             _employeeRepository = employeeRepository;
             _departmentRepository = departmentRepository;
         }
-
-        // ... rest of your existing methods remain the same ...
 
         // Existing Register method for regular users
         [HttpGet]

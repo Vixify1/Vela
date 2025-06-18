@@ -65,7 +65,7 @@ namespace HRWebApp.Controllers
                                a.ClockIn.Year == currentYear)
                         .Count();
                     
-                    // Hours worked this week - Fix the LINQ translation issue
+                    // Hours worked this week
                     var startOfWeek = today.AddDays(-(int)today.DayOfWeek);
                     var weeklyAttendance = _attendanceRepository.GetAll()
                         .Where(a => a.EmployeeId == currentEmployee.Id && 

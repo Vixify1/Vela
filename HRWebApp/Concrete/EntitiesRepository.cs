@@ -132,26 +132,6 @@ namespace HRWebApp.Concrete
             }
             return result;
         }
-        //    public  TTarget Map<TSource, TTarget>(TSource source)
-        //where TTarget : new()
-        //    {
-        //        TTarget target = new TTarget();
-        //        var sourceProperties = typeof(TSource).GetProperties();
-        //        var targetProperties = typeof(TTarget).GetProperties();
-
-        //        foreach (var targetProp in targetProperties)
-        //        {
-        //            var sourceProp = sourceProperties.FirstOrDefault(p => p.Name == targetProp.Name
-        //                                                                  && p.PropertyType == targetProp.PropertyType);
-        //            if (sourceProp != null && sourceProp.CanRead && targetProp.CanWrite)
-        //            {
-        //                var value = sourceProp.GetValue(source);
-        //                targetProp.SetValue(target, value);
-        //            }
-        //        }
-
-        //        return target;
-        //    }
         public virtual void Update(T entity)
         {
             _table.Update(entity);

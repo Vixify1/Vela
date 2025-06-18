@@ -11,7 +11,7 @@ using HRWebApp.Helper;
 
 namespace HRWebApp.Controllers
 {
-    [Authorize] // Ensure user is logged in
+    [Authorize]
     public class UserProfileController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -98,14 +98,6 @@ namespace HRWebApp.Controllers
                 currentUser.FirstName = model.FirstName;
                 currentUser.LastName = model.LastName;
                 currentUser.UpdatedOnUtc = DateTime.UtcNow;
-
-                // For admin users, update the username to reflect the new full name
-                //if (isAdmin)
-                //{
-                //    var newUserName = $"{model.FirstName} {model.LastName}";
-                //    currentUser.UserName = newUserName;
-                //    currentUser.NormalizedUserName = newUserName.ToUpper();
-                //}
 
                 // Update the user
                 var result = await _userManager.UpdateAsync(currentUser);
@@ -323,69 +315,3 @@ namespace HRWebApp.Controllers
         }
     }
 }
-
-        //        [HttpGet]
-        //        public async Task<IActionResult> Edit()
-        //        {
-        //            var user = await _userManager.GetUserAsync(User);
-        //            if (user == null)
-        //            {
-        //                return NotFound();
-        //            }
-
-        //            var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
-        //            if (!isAdmin)
-        //            {
-        //                return RedirectToAction(nameof(Index));
-        //            }
-
-        //            var model = new UserProfileViewModel
-        //            {
-        //                UserId = user.Id,
-        //                UserName = $"{user.FirstName} {user.LastName}",
-        //                Email = user.Email,
-        //                FirstName = user.FirstName,
-        //                LastName = user.LastName,
-        //                IsAdmin = true
-        //            };
-
-        //            return View(model);
-        //        }
-
-        //        [HttpPost]
-        //        [ValidateAntiForgeryToken]
-        //        public async Task<IActionResult> Edit(UserProfileViewModel model)
-        //        {
-        //            if (!ModelState.IsValid)
-        //            {
-        //                model.IsAdmin = true;
-        //                return View(model);
-        //            }
-
-        //            var user = await _userManager.GetUserAsync(User);
-        //            if (user == null)
-        //            {
-        //                return NotFound();
-        //            }
-
-        //            user.FirstName = model.FirstName;
-        //            user.LastName = model.LastName;
-        //            user.Email = model.Email;
-        //            user.UpdatedOnUtc = DateTime.UtcNow;
-
-        //            var result = await _userManager.UpdateAsync(user);
-        //            if (!result.Succeeded)
-        //            {
-        //                foreach (var error in result.Errors)
-        //                {
-        //                    ModelState.AddModelError("", error.Description);
-        //                }
-        //                model.IsAdmin = true;
-        //                return View(model);
-        //            }
-
-        //            TempData["StatusMessage"] = "Your profile has been updated";
-        //            return RedirectToAction(nameof(Index));
-        //        }
-        //    }
-    ///}
