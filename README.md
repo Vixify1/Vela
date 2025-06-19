@@ -20,6 +20,29 @@ A comprehensive Human Resources management web application built with ASP.NET Co
 - **Authentication**: ASP.NET Core Identity
 - **PDF Generation**: iTextSharp for salary letters
 
+## 📸 Screenshots
+
+### 🏠 Landing Page
+![Landing Page](Screenshots/Landing-Page.PNG)
+*Clean and modern landing page with user authentication and company branding*
+
+### 📊 Dashboard
+![Dashboard](Screenshots/Dashboard.PNG)
+*Comprehensive dashboard overview with key metrics, quick actions, and activity tracking*
+
+### 👥 Employee Management
+![Employee Management](Screenshots/employee-management.PNG)
+*Complete employee management system with detailed profiles, department assignments, and administrative controls*
+
+### 📅 Holiday Calendar
+![Holiday Calendar](Screenshots/holiday-calendar.PNG)
+*Interactive holiday calendar for managing company holidays and employee time off*
+
+### 💰 Payroll Management
+![Payroll Management](Screenshots/payroll.PNG)
+*Advanced payroll processing system with salary calculations, tax deductions, and payment tracking*
+
+
 ### Local Development Setup
 
 1. **Clone the repository**
