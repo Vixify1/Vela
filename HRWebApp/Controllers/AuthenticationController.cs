@@ -169,39 +169,68 @@ namespace HRWebApp.Controllers
             return View(model);
         }
 
-        // Existing Login method
-// ... existing code ...
-        // Existing Login method
+        // Improved Login method with specific error messages
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? ReturnUrl)
         {
             if (ModelState.IsValid)
             {
+                // First check if user exists
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    // Email doesn't exist - add specific error message
+                    ModelState.AddModelError("Email", "No account found with this email address.");
+                    return View("~/Views/Home/Index.cshtml", model);
+                }
+
+                // Check if user account is active (if you have this property)
+                if (user.IsActive == false)
+                {
+                    ModelState.AddModelError(string.Empty, "Your account has been deactivated. Please contact your administrator.");
+                    return View("~/Views/Home/Index.cshtml", model);
+                }
+
+                // Try to sign in
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+                
                 if (result.Succeeded)
                 {
-                    ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
-                    if (user != null)
+                    // Login successful - redirect based on role
+                    if (await _userManager.IsInRoleAsync(user, UserTypeOptions.Admin.ToString()))
                     {
-                        if (await _userManager.IsInRoleAsync(user, UserTypeOptions.Admin.ToString()))
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
+                        return RedirectToAction("Index", "Dashboard");
                     }
+                    
                     if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                     {
                         return LocalRedirect(ReturnUrl);
                     }
-                    return RedirectToAction("Index", "Home");
+                    
+                    return RedirectToAction("Index", "Dashboard");
                 }
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                else if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError(string.Empty, "Your account is temporarily locked due to multiple failed login attempts. Please try again later.");
+                    return View("~/Views/Home/Index.cshtml", model);
+                }
+                else if (result.IsNotAllowed)
+                {
+                    ModelState.AddModelError(string.Empty, "Login is not allowed. Please contact your administrator.");
+                    return View("~/Views/Home/Index.cshtml", model);
+                }
+                else
+                {
+                    // Password is wrong since user exists but login failed
+                    ModelState.AddModelError("Password", "The password you entered is incorrect.");
+                    return View("~/Views/Home/Index.cshtml", model);
+                }
             }
-            // FIX: Change this line from return View(model); to redirect back to Home
-            TempData["LoginError"] = "Invalid login attempt. Please check your email and password.";
-            return RedirectToAction("Index", "Home");
+            
+            // If we got here, model validation failed - return to login form
+            return View("~/Views/Home/Index.cshtml", model);
         }
-// ... existing code ...
 
         // Existing Logout method
         [HttpPost]

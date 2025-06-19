@@ -290,14 +290,16 @@ body {
         padding: 1rem 0;
     }
     
-    .vela-brand {
-        font-size: 2.2rem;
+    .landing-header .col {
+        padding-left: 2rem;
+        padding-right: 2rem;
+        text-align: center; /* Center only on tablet and mobile */
     }
     
-    .landing-header .col {
-        padding-left: 3rem;
-        padding-right: 3rem;
-        text-align: center;
+    .vela-brand {
+        font-size: 2.2rem;
+        text-align: center; /* Center only on tablet and mobile */
+        width: 100%; /* Full width only on tablet and mobile */
     }
 }
 
@@ -312,17 +314,39 @@ body {
     }
     
     .landing-header {
-        padding: 1.5rem 0;
-    }
-    
-    .vela-brand {
-        font-size: 1.8rem;
+        padding: 1rem 0;
     }
     
     .landing-header .col {
         padding-left: 1rem;
         padding-right: 1rem;
-        text-align: left;
+        text-align: center;
+    }
+    
+    .vela-brand {
+        font-size: clamp(1.8rem, 6vw, 2.2rem);
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* Additional mobile improvements */
+@media (max-width: 480px) {
+    .landing-header {
+        padding: 0.8rem 0;
+    }
+    
+    .vela-brand {
+        font-size: clamp(1.6rem, 7vw, 2rem);
+        padding: 0.5rem 0;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .landing-header .col {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        text-align: center;
     }
 }
 
@@ -362,18 +386,19 @@ body {
 
 .vela-brand {
     color: #2596be;
-    font-size: 2.8rem;
+    font-size: 2.8rem; /* Fixed size for desktop */
     font-weight: 700;
     text-decoration: none;
     transition: all 0.3s ease;
     display: inline-block;
+    /* Removed text-align: center and width: 100% to keep it left-aligned on desktop */
 }
 
-    .vela-brand:hover {
-        color: #2596be;
-        text-decoration: none;
-        transform: scale(1.05);
-    }
+.vela-brand:hover {
+    color: #2596be;
+    text-decoration: none;
+    transform: scale(1.05);
+}
 
 /* Account request alert styling */
 .login-card .alert-info {
@@ -386,4 +411,40 @@ body {
 
 .login-card .alert-info i {
     color: var(--turquoise);
+}
+
+/* Enhanced validation error styling */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6 2.4 2.4M8.2 3.6l-2.4 2.4'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.text-danger {
+    color: #dc3545 !important;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Validation summary styling */
+.validation-summary-errors {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 0.375rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.validation-summary-errors ul {
+    margin-bottom: 0;
+    padding-left: 1rem;
 }

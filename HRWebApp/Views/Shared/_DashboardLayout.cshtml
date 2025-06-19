@@ -13,6 +13,24 @@
 </head>
 <body class="dashboard-body">
     <div class="dashboard-container">
+        <!-- Mobile Header (visible only on mobile) -->
+        <header class="mobile-header">
+            <div class="mobile-nav-wrapper">
+                <button class="mobile-menu-toggle" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="mobile-brand">
+                    <h2>Vela</h2>
+                </div>
+                <div class="mobile-user-info">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay"></div>
+
         <!-- Sidebar -->
         <aside class="sidebar">
             <!-- Vela Brand at Top -->
@@ -20,6 +38,10 @@
                 <div class="brand-logo">
                     <h2>Vela</h2>
                 </div>
+                <!-- Close button for mobile -->
+                <button class="mobile-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             <div class="user-profile">
