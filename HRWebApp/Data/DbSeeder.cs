@@ -38,7 +38,9 @@ namespace HRWebApp.Data
             try
             {
                 await SeedRolesAsync();
+                await SeedDepartmentsAsync();
                 await SeedHolidaysAsync();
+                await SeedAdminUserAsync();
                 await SeedTestUsersAsync();
                 await SeedAttendanceDataAsync();
                 _logger.LogInformation("Database seeding completed successfully.");
@@ -65,16 +67,57 @@ namespace HRWebApp.Data
             }
         }
 
+        private async Task SeedDepartmentsAsync()
+        {
+            if (!_departmentRepository.GetAll().Any())
+            {
+                var departments = new[]
+                {
+                    new Department { Name = "General" },
+                    new Department { Name = "IT" },
+                    new Department { Name = "HR" },
+                    new Department { Name = "Marketing" },
+                    new Department { Name = "Finance" }
+                };
+
+                foreach (var dept in departments)
+                {
+                    _departmentRepository.Add(dept);
+                }
+                _logger.LogInformation("Departments created.");
+            }
+        }
+
         private async Task SeedHolidaysAsync()
         {
             var holidays = new[]
             {
+                // 2024 Holidays (existing)
                 new { Date = new DateTime(2024, 1, 1), Description = "New Year's Day" },
                 new { Date = new DateTime(2024, 2, 14), Description = "Valentine's Day" },
                 new { Date = new DateTime(2024, 3, 15), Description = "Special Holiday - March 15" },
                 new { Date = new DateTime(2024, 4, 1), Description = "April Fool's Day" },
                 new { Date = new DateTime(2024, 7, 4), Description = "Independence Day" },
-                new { Date = new DateTime(2024, 12, 25), Description = "Christmas Day" }
+                new { Date = new DateTime(2024, 12, 25), Description = "Christmas Day" },
+                
+                // 2025 Albanian Holidays
+                new { Date = new DateTime(2025, 1, 1), Description = "Festat e Vitit të Ri" },
+                new { Date = new DateTime(2025, 1, 2), Description = "Festat e Vitit të Ri" },
+                new { Date = new DateTime(2025, 3, 14), Description = "Dita e Verës" },
+                new { Date = new DateTime(2025, 3, 22), Description = "Dita e Nevruzit" },
+                new { Date = new DateTime(2025, 3, 30), Description = "Dita e Bajramit të Madh" },
+                new { Date = new DateTime(2025, 4, 20), Description = "E diela e Pashkëve Ortodokse" },
+                new { Date = new DateTime(2025, 4, 20), Description = "E diela e Pashkëve Katolike" },
+                new { Date = new DateTime(2025, 5, 1), Description = "Dita Ndërkombëtare e Punonjësve" },
+                new { Date = new DateTime(2025, 5, 15), Description = "Ditë Pushimi" },
+                new { Date = new DateTime(2025, 5, 16), Description = "Ditë Pushimi" },
+                new { Date = new DateTime(2025, 6, 6), Description = "Dita e Kurban Bajramit" },
+                new { Date = new DateTime(2025, 9, 5), Description = "Dita e Shenjtërimit të Shenjt Terezës" },
+                new { Date = new DateTime(2025, 11, 22), Description = "Dita e Alfabetit" },
+                new { Date = new DateTime(2025, 11, 28), Description = "Dita Flamurit dhe e Pavarësisë" },
+                new { Date = new DateTime(2025, 11, 29), Description = "Dita e Çlirimit" },
+                new { Date = new DateTime(2025, 12, 8), Description = "Dita Kombëtare e Rinisë" },
+                new { Date = new DateTime(2025, 12, 25), Description = "Krishtlindje" }
             };
 
             foreach (var holidayData in holidays)
@@ -92,16 +135,46 @@ namespace HRWebApp.Data
                     _holidayRepository.Add(holiday);
                 }
             }
+            _logger.LogInformation("Holidays seeded including Albanian holidays for 2025.");
+        }
+
+        private async Task SeedAdminUserAsync()
+        {
+            var adminEmail = "admin@hrwebapp.com";
+            var adminUser = await _userManager.FindByEmailAsync(adminEmail);
+
+            if (adminUser == null)
+            {
+                var admin = new ApplicationUser
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    FirstName = "System",
+                    LastName = "Admin",
+                    IsActive = true,
+                    CreatedOnUtc = DateTime.UtcNow,
+                    EmailConfirmed = true
+                };
+
+                var result = await _userManager.CreateAsync(admin, "Admin123!");
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(admin, "Admin");
+                    _logger.LogInformation("Admin user created successfully.");
+                }
+            }
         }
 
         private async Task SeedTestUsersAsync()
         {
-            // Create multiple test users for better testing
+            // Create sample users with variety across departments
             var testUsers = new[]
             {
-                new { Email = "test@example.com", FirstName = "Test", LastName = "User", HourlyRate = 25.00m },
-                new { Email = "john.doe@example.com", FirstName = "John", LastName = "Doe", HourlyRate = 30.00m },
-                new { Email = "jane.smith@example.com", FirstName = "Jane", LastName = "Smith", HourlyRate = 35.00m }
+                new { Email = "test@example.com", FirstName = "Test", LastName = "User", HourlyRate = 25.00m, Department = "General" },
+                new { Email = "john.doe@example.com", FirstName = "John", LastName = "Doe", HourlyRate = 30.00m, Department = "IT" },
+                new { Email = "jane.smith@example.com", FirstName = "Jane", LastName = "Smith", HourlyRate = 35.00m, Department = "HR" },
+                new { Email = "mike.johnson@example.com", FirstName = "Mike", LastName = "Johnson", HourlyRate = 28.00m, Department = "Marketing" },
+                new { Email = "sarah.wilson@example.com", FirstName = "Sarah", LastName = "Wilson", HourlyRate = 32.00m, Department = "Finance" }
             };
 
             foreach (var userData in testUsers)
@@ -124,8 +197,8 @@ namespace HRWebApp.Data
                     {
                         await _userManager.AddToRoleAsync(user, "User");
 
-                        var department = _departmentRepository.GetAll().FirstOrDefault() ??
-                            CreateDepartment("General");
+                        var department = _departmentRepository.GetAll().FirstOrDefault(d => d.Name == userData.Department) ??
+                                        _departmentRepository.GetAll().First();
 
                         var employee = new Employee
                         {
@@ -144,13 +217,6 @@ namespace HRWebApp.Data
             }
         }
 
-        private Department CreateDepartment(string name)
-        {
-            var department = new Department { Name = name };
-            _departmentRepository.Add(department);
-            return department;
-        }
-
         private async Task SeedAttendanceDataAsync()
         {
             var employees = _employeeRepository.GetAll().ToList();
@@ -160,11 +226,14 @@ namespace HRWebApp.Data
                 var user = await _userManager.FindByIdAsync(employee.UserId.ToString());
                 if (user != null)
                 {
-                    // Seed multiple months for each employee
+                    // Seed 2024 months for each employee
                     await SeedMonthlyAttendance(employee, 2024, 1);  // January
                     await SeedMonthlyAttendance(employee, 2024, 2);  // February
                     await SeedMonthlyAttendance(employee, 2024, 3);  // March
                     await SeedMonthlyAttendance(employee, 2024, 4);  // April
+                    
+                    // Seed 2025 months for each employee
+                    await SeedMonthlyAttendance(employee, 2025, 6);  // June 2025
 
                     _logger.LogInformation($"Seeded attendance data for {user.FirstName} {user.LastName}");
                 }
@@ -184,7 +253,7 @@ namespace HRWebApp.Data
                 return;
 
             var daysInMonth = DateTime.DaysInMonth(year, month);
-            var random = new Random(employee.Id * month); // Seed for consistent but varied data
+            var random = new Random(employee.Id * month * year); // Include year for more variation
 
             for (int day = 1; day <= daysInMonth; day++)
             {
@@ -197,6 +266,17 @@ namespace HRWebApp.Data
                     // Occasionally work on weekends (10% chance)
                     if (random.NextDouble() > 0.1)
                         continue;
+                }
+
+                // Check for holidays in June 2025
+                if (year == 2025 && month == 6)
+                {
+                    // June 6th is Kurban Bajram (holiday)
+                    if (day == 6)
+                    {
+                        // Skip this day as it's a holiday
+                        continue;
+                    }
                 }
 
                 // Occasionally skip weekdays (5% chance - sick days, vacation, etc.)
@@ -232,6 +312,22 @@ namespace HRWebApp.Data
                             workHours = 4.0;
                         else
                             workHours = 8.0;
+                        break;
+                    case 6: // June 2025 - Summer schedule
+                        if (year == 2025)
+                        {
+                            // Summer hours - slightly shorter days
+                            workHours = 7.5 + (random.NextDouble() * 0.5); // 7.5-8.0 hours
+                            
+                            // Some Friday half-days in summer (20% chance)
+                            if (dayOfWeek == DayOfWeek.Friday && random.NextDouble() < 0.2)
+                            {
+                                workHours = 4.0; // Half day Friday
+                            }
+                            
+                            // Flexible start times in summer
+                            startHour = 7 + random.Next(0, 3); // 7-9 AM start
+                        }
                         break;
                 }
 

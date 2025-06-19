@@ -13,8 +13,6 @@ namespace HRWebApp.Models.Authentication
         [Required(ErrorMessage = "Password can't be blank")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
-
-        public bool RememberMe { get; set; }
     }
 }
 

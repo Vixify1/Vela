@@ -52,10 +52,11 @@
                                 <div class="form-group mb-3">
                                     <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
                                     <div class="input-group">
-                                        <input asp-for="HourlyRate" class="form-control" step="1" />
+                                        <input asp-for="HourlyRate" class="form-control" step="0.01" />
                                         <span class="input-group-text">LEK</span>
                                     </div>
                                     <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                                    <small class="form-text text-muted">Enter hourly rate with decimals (e.g., 1200.50)</small>
                                 </div>
                             </div>
                         </div>

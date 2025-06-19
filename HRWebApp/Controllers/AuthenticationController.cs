@@ -15,7 +15,7 @@ namespace HRWebApp.Controllers
     public class AuthenticationController : Controller
     {
         //  TOGGLE THIS TO ENABLE/DISABLE ADMIN CREATION
-        private const bool ENABLE_ADMIN_CREATION = false;
+        private const bool ENABLE_ADMIN_CREATION = true;
 
         // Make this accessible to views
         public static bool IsAdminCreationEnabled => ENABLE_ADMIN_CREATION;
@@ -170,13 +170,15 @@ namespace HRWebApp.Controllers
         }
 
         // Existing Login method
+// ... existing code ...
+        // Existing Login method
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? ReturnUrl)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
                 if (result.Succeeded)
                 {
                     ApplicationUser user = await _userManager.FindByEmailAsync(model.Email);
@@ -195,8 +197,11 @@ namespace HRWebApp.Controllers
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
             }
-            return View(model);
+            // FIX: Change this line from return View(model); to redirect back to Home
+            TempData["LoginError"] = "Invalid login attempt. Please check your email and password.";
+            return RedirectToAction("Index", "Home");
         }
+// ... existing code ...
 
         // Existing Logout method
         [HttpPost]
