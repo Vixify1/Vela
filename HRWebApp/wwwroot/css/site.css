@@ -290,16 +290,9 @@ body {
         padding: 1rem 0;
     }
     
-    .landing-header .col {
-        padding-left: 2rem;
-        padding-right: 2rem;
-        text-align: center; /* Center only on tablet and mobile */
-    }
-    
-    .vela-brand {
-        font-size: 2.2rem;
-        text-align: center; /* Center only on tablet and mobile */
-        width: 100%; /* Full width only on tablet and mobile */
+    /* Hide the entire landing header on tablet and mobile */
+    .landing-header {
+        display: none;
     }
 }
 
@@ -313,40 +306,17 @@ body {
         padding-right: 1rem !important;
     }
     
+    /* Ensure landing header stays hidden on mobile */
     .landing-header {
-        padding: 1rem 0;
-    }
-    
-    .landing-header .col {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        text-align: center;
-    }
-    
-    .vela-brand {
-        font-size: clamp(1.8rem, 6vw, 2.2rem);
-        text-align: center;
-        width: 100%;
+        display: none;
     }
 }
 
 /* Additional mobile improvements */
 @media (max-width: 480px) {
+    /* Ensure landing header stays hidden on small mobile */
     .landing-header {
-        padding: 0.8rem 0;
-    }
-    
-    .vela-brand {
-        font-size: clamp(1.6rem, 7vw, 2rem);
-        padding: 0.5rem 0;
-        text-align: center;
-        width: 100%;
-    }
-    
-    .landing-header .col {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-        text-align: center;
+        display: none;
     }
 }
 
@@ -386,12 +356,11 @@ body {
 
 .vela-brand {
     color: #2596be;
-    font-size: 2.8rem; /* Fixed size for desktop */
+    font-size: 2.8rem;
     font-weight: 700;
     text-decoration: none;
     transition: all 0.3s ease;
     display: inline-block;
-    /* Removed text-align: center and width: 100% to keep it left-aligned on desktop */
 }
 
 .vela-brand:hover {
