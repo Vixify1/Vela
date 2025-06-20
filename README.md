@@ -2,6 +2,8 @@
 
 A comprehensive Human Resources management web application built with ASP.NET Core MVC.
 
+hrwebapp-vela.azurewebsites.net
+
 ## Features
 
 - **Employee Management**: Complete employee lifecycle management
